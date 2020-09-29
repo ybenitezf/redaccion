@@ -1,0 +1,39 @@
+version: '3'
+
+services: 
+
+    db_auth:
+        image: mysql
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        environment: 
+            MYSQL_ROOT_PASSWORD: sjBf743/dJk
+            MYSQL_DATABASE: authdb
+            MYSQL_USER: authdb
+            MYSQL_PASSWORD: f9mqwdNJuqSJFSqT
+        volumes:
+            - authdb:/var/lib/mysql
+    
+    auth:
+        build: ./auth
+        depends_on: 
+            - db_auth
+        command: gunicorn "application:create_app('config.Config')" --log-level=debug --reload -b 0.0.0.0:5000
+        environment: 
+            SECRET_KEY: sjBf743/dJkaut3hdbf9mqwdNJuqSJ4413mdnduhrFSqT
+            SQLALCHEMY_DATABASE_URI: mysql+pymysql://authdb:f9mqwdNJuqSJFSqT@db_auth/authdb
+            FLASK_APP: application:create_app('config.Config')
+        expose: 
+            - 5000
+        volumes:
+            - ./auth:/src
+
+    web:
+        build: ./nginx
+        ports: 
+            - 8080:80
+        depends_on: 
+            - auth
+
+volumes:
+    authdb:
