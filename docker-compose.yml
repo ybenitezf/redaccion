@@ -15,6 +15,7 @@ services:
     
     auth:
         build: ./auth
+        restart: always
         depends_on: 
             - db_auth
         command: gunicorn "application:create_app('config.Config')" --log-level=debug --reload -b 0.0.0.0:5000
