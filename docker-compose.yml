@@ -30,6 +30,8 @@ services:
     web:
         build: ./nginx
         restart: always
+        environment: 
+            AUTH_ENDPOINT: auth.local
         ports: 
             - 8080:80
         depends_on: 

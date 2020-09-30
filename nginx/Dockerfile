@@ -1,3 +1,4 @@
 FROM nginx:alpine
 
-COPY authweb.conf /etc/nginx/conf.d/authweb.conf
+# copy all services templates to this directory
+COPY *.template /etc/nginx/templates/
