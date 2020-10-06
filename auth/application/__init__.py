@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_ldap3_login import LDAP3LoginManager
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask import Flask
@@ -10,6 +11,7 @@ import logging
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
+ldap_mgr = LDAP3LoginManager()
 admon = Admin()
 
 def create_app(config):
@@ -30,6 +32,7 @@ def create_app(config):
     migrate.init_app(app, db)
     login.init_app(app)
     admon.init_app(app)
+    ldap_mgr.init_app(app)
 
     # incluir modulos y rutas
     with app.app_context():
@@ -38,6 +41,7 @@ def create_app(config):
 
         # registrar los blueprints
         app.register_blueprint(default)
+        login.login_view = 'default.log_user'
 
         # admon views 
         admon.add_view(UserView(User, db.session))
