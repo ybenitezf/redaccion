@@ -1,10 +1,16 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_login import LoginManager
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 from flask import Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
 import logging
 
 db = SQLAlchemy()
 migrate = Migrate()
+login = LoginManager()
+admon = Admin()
 
 def create_app(config):
     """Inicializar la aplicación"""
@@ -15,15 +21,25 @@ def create_app(config):
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
 
+    app.wsgi_app = ProxyFix(
+        app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, 
+        x_prefix=1)
+
     # inicializar otros plugins
     db.init_app(app)
     migrate.init_app(app, db)
+    login.init_app(app)
+    admon.init_app(app)
 
     # incluir modulos y rutas
-    from application.models.usermodel import User
-    from application.views.default import default
+    with app.app_context():
+        from application.models.usermodel import User, UserView
+        from application.views.default import default
 
-    # registrar los blueprints
-    app.register_blueprint(default)
+        # registrar los blueprints
+        app.register_blueprint(default)
+
+        # admon views 
+        admon.add_view(UserView(User, db.session))
 
     return app
