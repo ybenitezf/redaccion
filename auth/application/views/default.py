@@ -57,6 +57,7 @@ def log_user():
                 user.name = res.user_info['displayName']
                 user.set_password(form.password.data)
                 user.username = res.user_info['sAMAccountName']
+                user.email = res.user_info['mail']
                 db.session.add(user)
                 db.session.commit()
 

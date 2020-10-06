@@ -12,6 +12,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.String(32), primary_key=True, default=_gen_uuid)
     name = db.Column(db.String(120))
     username = db.Column(db.String(64), index=True, unique=True)
+    email = db.Column(db.String(254), index=True)
     password_hash = db.Column(db.String(128))
 
     def set_password(self, password):
@@ -31,6 +32,7 @@ class UserView(ModelView):
             u = User()
             u.username = form.username.data
             u.name = form.name.data
+            u.email = form.email.data
             u.set_password(form.password1.data)
             db.session.add(u)
             db.session.commit()
