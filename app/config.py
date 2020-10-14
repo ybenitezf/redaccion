@@ -12,7 +12,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
     
     # ldap integration
-    LDAP_AUTH = True
+    LDAP_AUTH = False
     LDAP_HOST = '192.168.2.2'
     LDAP_BASE_DN = 'DC=adelante,DC=lan'
     LDAP_USER_DN = 'CN=Users'

@@ -13,8 +13,8 @@ services:
         volumes:
             - authdb:/var/lib/mysql
     
-    auth:
-        build: ./auth
+    app:
+        build: ./app
         restart: always
         depends_on: 
             - db_auth
@@ -26,17 +26,17 @@ services:
         expose: 
             - 5000
         volumes:
-            - ./auth:/src
+            - ./app:/src
 
     web:
         build: ./nginx
         restart: always
         environment: 
-            AUTH_ENDPOINT: auth.local
+            AUTH_ENDPOINT: app.local
         ports: 
             - 8080:8080
         depends_on: 
-            - auth
+            - app
 
 volumes:
     authdb:

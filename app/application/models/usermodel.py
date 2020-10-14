@@ -42,4 +42,4 @@ class UserView(ModelView):
                 return redirect(url_for('user.index_view'))
 
 
-        return self.render('create_user.html', form=form)
+        return self.render('users/create_user.html', form=form)

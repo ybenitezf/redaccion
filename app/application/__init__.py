@@ -10,7 +10,7 @@ import logging
 
 db = SQLAlchemy()
 migrate = Migrate()
-login = LoginManager()
+login_mgr = LoginManager()
 ldap_mgr = LDAP3LoginManager()
 admon = Admin()
 
@@ -30,7 +30,8 @@ def create_app(config):
     # inicializar otros plugins
     db.init_app(app)
     migrate.init_app(app, db)
-    login.init_app(app)
+    login_mgr.init_app(app)
+    login_mgr.login_message = "Inicie sesión para acceder a esta página"
     admon.init_app(app)
     ldap_mgr.init_app(app)
 
@@ -38,10 +39,12 @@ def create_app(config):
     with app.app_context():
         from application.models.usermodel import User, UserView
         from application.views.default import default
+        from application.views.users import users_bp
 
         # registrar los blueprints
         app.register_blueprint(default)
-        login.login_view = 'default.log_user'
+        app.register_blueprint(users_bp)
+        login_mgr.login_view = 'users.login'
 
         # admon views 
         admon.add_view(UserView(User, db.session))
