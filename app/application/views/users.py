@@ -1,5 +1,5 @@
 from application import login_mgr, ldap_mgr, db
-from application.models.usermodel import User
+from application.models.security import User
 from application.forms import LoginForm
 from flask import current_app, Blueprint, jsonify, render_template
 from flask import request, redirect, url_for, flash, request

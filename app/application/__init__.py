@@ -32,15 +32,17 @@ def create_app(config):
     migrate.init_app(app, db)
     login_mgr.init_app(app)
     login_mgr.login_message = "Inicie sesión para acceder a esta página"
-    admon.init_app(app)
     ldap_mgr.init_app(app)
 
     # incluir modulos y rutas
     with app.app_context():
-        from application.models.usermodel import User, UserView
+        from application.models.security import User, Role
         from application.views.default import default
         from application.views.users import users_bp
+        from application.views.admin import MyAdminIndexView, UserView
+        from application.views.admin import RoleView
 
+        admon.init_app(app, index_view=MyAdminIndexView())
         # registrar los blueprints
         app.register_blueprint(default)
         app.register_blueprint(users_bp)
@@ -48,5 +50,6 @@ def create_app(config):
 
         # admon views 
         admon.add_view(UserView(User, db.session))
+        admon.add_view(RoleView(Role, db.session))
 
     return app
