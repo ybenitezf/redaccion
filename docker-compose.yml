@@ -12,12 +12,16 @@ services:
             MYSQL_PASSWORD: f9mqwdNJuqSJFSqT
         volumes:
             - authdb:/var/lib/mysql
+
+    redis:
+        image: redis
     
     app:
         build: ./app
         restart: always
         depends_on: 
             - db_auth
+            - redis
         command: gunicorn "application:create_app('config.Config')" --log-level=debug --reload -b 0.0.0.0:5000
         environment: 
             SECRET_KEY: sjBf743/dJkaut3hdbf9mqwdNJuqSJ4413mdnduhrFSqT
