@@ -4,7 +4,12 @@
 
     <div class="container">
 
-        <h1 class="center">Entrar <i class="small material-icons">login</i></h1>
+        <div class="row">
+            <div class="col s12 center-align mt-5">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" height="128">
+            </div>
+        </div>
+        <!-- <h1 class="center">Entrar <i class="small material-icons">login</i></h1> -->
 
         {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -22,7 +27,6 @@
 
         {% endif %}
         {% endwith %}
-
 
         <div class="row">
             <form action="" method="POST" novalidate class="col s6 offset-s3" autocomplete="off">

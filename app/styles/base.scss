@@ -1,0 +1,20 @@
+
+// reset to material
+@import "node_modules/materialize-css/sass/materialize.scss";
+@import "node_modules/material-icons/iconfont/material-icons.scss";
+
+.icon-block {
+    padding: 0 15px;
+}
+
+.icon-block .material-icons {
+    font-size: inherit;
+}
+  
+html {
+    font-size: 16px;
+}
+
+main {
+    min-height: 100vh;
+}
