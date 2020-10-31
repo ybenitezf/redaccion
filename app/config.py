@@ -10,6 +10,8 @@ class Config(object):
     SECRET_KEY = os.getenv('SECRET_KEY') or 'some-secret-of-my-own'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
+    CACHE_TYPE = 'redis'
+    CACHE_REDIS_URL = "redis://redis:6379/"
     
     # ldap integration
     LDAP_AUTH = False
@@ -22,6 +24,7 @@ class Config(object):
     LDAP_BIND_USER_DN = 'CN=Read Only,CN=Users,DC=adelante,DC=lan'
     LDAP_BIND_USER_PASSWORD = 'zp3N7qvu'
     # --
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 class TestConfig(Config):
     TESTING = True

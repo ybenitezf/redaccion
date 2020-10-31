@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>{% block page_title %}Title{% endblock %}</title>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/materialize.css') }}" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="{{ url_for('static', filename='css/style.css') }}" type="text/css" rel="stylesheet" media="screen,projection"/>
+
+    {% block htmlhead %}{% endblock %}
+</head>
+<body>
+    <header>
+      <div class="navbar-fixed">
+        <nav class="red darken-4">
+          <div class="nav-wrapper">
+            <!-- <a href="{{ url_for('default.index') }}" class="brand-logo">
+              {% block brandfff %}Redacción{% endblock brandfff %}
+            </a> -->
+            <div class="brand-logo">
+              <a href="#" data-target="slide-out" class="sidenav-trigger show-on-large"><i class="material-icons">menu</i></a>
+              <a href="{{ url_for('default.index') }}" class="hide-on-med-and-down">
+                {% block brand %}Redacción{% endblock brand %}
+              </a> 
+            </div>
+           
+            <ul class="right hide-on-med-and-down">
+              {% if current_user.is_authenticated %}
+              <li><a href="{{ url_for('users.logout') }}"><i class="material-icons">logout</i></a></li>
+              {% endif %}
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <main style="min-height: 100vh;">
+        <!-- sidebar -->
+        <ul id="slide-out" class="sidenav">
+          <li><a href="#!">First Sidebar Link</a></li>
+          <li><a href="#!">Second Sidebar Link</a></li>
+        </ul>
+
+        <!-- main section -->
+        <div class="container blue darken-4">
+          {% block content %}{% endblock %}
+        </div>
+    </main>
+    <footer class="page-footer grey lighten-5">
+        <!-- the footer -->
+        <div class="footer-copyright">
+          <div class="container grey-text text-darken-3">
+            © 2020 Redacción Adelante, por Yoel Benítez Fonseca
+            <a class="grey-text text-darken-3 right" href="https://www.python.org/" target="_blanck">
+              Powered by Python
+            </a>
+        </div>
+    </footer>
+    <!--  Scripts-->
+    <script src="{{ url_for('static', filename='js/jquery-2.1.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/materialize.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/init.js') }}"></script>
+    {% block page_js %}{% endblock %}
+    </body>
+</html>

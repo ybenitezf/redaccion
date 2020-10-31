@@ -1,10 +1,11 @@
 from application import login_mgr, ldap_mgr, db
 from application.models.security import User
 from application.forms import LoginForm
-from flask import current_app, Blueprint, jsonify, render_template
-from flask import request, redirect, url_for, flash, request
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_ldap3_login import AuthenticationResponseStatus
+from flask_principal import Identity, AnonymousIdentity, identity_changed
+from flask import current_app, Blueprint, jsonify, render_template
+from flask import request, redirect, url_for, flash, request, session
 
 
 users_bp = Blueprint('users', __name__, url_prefix='/users')
@@ -25,6 +26,18 @@ def load_user(id):
 @login_required
 def logout():
     logout_user()
+
+    # Remove session keys set by Flask-Principal
+    for key in ('identity.name', 'identity.auth_type'):
+        current_app.logger.debug("session.pop({})".format(key))
+        session.pop(key, None)
+
+     # Tell Flask-Principal the user is anonymous
+    current_app.logger.debug('In logout() identity_changed.send')
+    identity_changed.send(
+        current_app._get_current_object(), 
+        identity=AnonymousIdentity())
+
     return redirect(url_for('.login'))
 
 
@@ -37,6 +50,7 @@ def login():
 
     form = LoginForm()
     if form.validate_on_submit():
+        auth_type = 'database'
 
         if current_app.config['LDAP_AUTH']:
             # cargar usuario desde LDAP
@@ -56,6 +70,7 @@ def login():
                 user.email = res.user_info['mail']
                 db.session.add(user)
                 db.session.commit()
+                auth_type = 'ldap'
 
         # si no se usa ldap o ya se creo/genero el usuario desde ldap
         # entonces seguir con el flujo normal
@@ -66,6 +81,10 @@ def login():
             return redirect(url_for('.login'))
         
         login_user(user)
+        # Tell Flask-Principal the identity changed
+        identity_changed.send(
+            current_app._get_current_object(), 
+            identity=Identity(user.id, auth_type=auth_type))
         return redirect(next or url_for('default.index'))
 
     return render_template('users/login.html', form=form)

@@ -4,6 +4,9 @@ from flask_login import LoginManager
 from flask_ldap3_login import LDAP3LoginManager
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_principal import Principal
+from flask_debugtoolbar import DebugToolbarExtension
+from flask_caching import Cache
 from flask import Flask
 from werkzeug.middleware.proxy_fix import ProxyFix
 import logging
@@ -13,6 +16,9 @@ migrate = Migrate()
 login_mgr = LoginManager()
 ldap_mgr = LDAP3LoginManager()
 admon = Admin()
+principal = Principal()
+devtoolbar = DebugToolbarExtension()
+cache = Cache()
 
 def create_app(config):
     """Inicializar la aplicación"""
@@ -33,14 +39,16 @@ def create_app(config):
     login_mgr.init_app(app)
     login_mgr.login_message = "Inicie sesión para acceder a esta página"
     ldap_mgr.init_app(app)
+    principal.init_app(app)
+    devtoolbar.init_app(app)
+    cache.init_app(app)
 
     # incluir modulos y rutas
     with app.app_context():
-        from application.models.security import User, Role
         from application.views.default import default
         from application.views.users import users_bp
         from application.views.admin import MyAdminIndexView, UserView
-        from application.views.admin import RoleView
+        from application.views.admin import RoleView, PermissionView
 
         admon.init_app(app, index_view=MyAdminIndexView())
         # registrar los blueprints
@@ -49,7 +57,8 @@ def create_app(config):
         login_mgr.login_view = 'users.login'
 
         # admon views 
-        admon.add_view(UserView(User, db.session))
-        admon.add_view(RoleView(Role, db.session))
+        admon.add_view(UserView())
+        admon.add_view(RoleView())
+        admon.add_view(PermissionView())
 
     return app
