@@ -40,7 +40,7 @@ def create_app(config):
     login_mgr.login_message = "Inicie sesión para acceder a esta página"
     ldap_mgr.init_app(app)
     principal.init_app(app)
-    devtoolbar.init_app(app)
+    # devtoolbar.init_app(app)
     cache.init_app(app)
 
     # incluir modulos y rutas

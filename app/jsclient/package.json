@@ -1,0 +1,40 @@
+{
+  "name": "jsclient",
+  "version": "1.0.0",
+  "description": "Utilidades de JS para adlgestion",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack --watch --mode=development",
+    "prod": "webpack --mode=production"
+  },
+  "keywords": [
+    "adelante",
+    "adlgestion"
+  ],
+  "author": "Yoel Benitez Fonseca",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "@editorjs/delimiter": "^1.1.0",
+    "@editorjs/editorjs": "^2.17.0",
+    "@editorjs/header": "^2.4.0",
+    "@editorjs/image": "link:./image",
+    "@editorjs/link": "link:editorjs_link",
+    "@editorjs/list": "^1.4.0",
+    "@editorjs/paragraph": "^2.6.1",
+    "@editorjs/quote": "^2.3.0",
+    "@editorjs/warning": "file:warning/",
+    "babel-loader": "^8.1.0",
+    "path": "^0.12.7",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "axios": "^0.19.2",
+    "codex-notifier": "^1.1.2",
+    "stimulus": "^1.1.1"
+  }
+}

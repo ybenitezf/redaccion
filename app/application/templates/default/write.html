@@ -1,0 +1,73 @@
+{% extends 'layout_full.html' %}
+
+{% block page_title %}Escribir{% endblock %}
+
+{% block breadcrumb %}
+<nav class="">
+    <div class="nav-wrapper">
+      <div class="col s12">
+        <a href="{{ url_for('default.index') }}" class="breadcrumb">Mi trabajo</a>
+        <a href="#!" class="breadcrumb">Escribir</a>
+      </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div data-controller="editor"
+    data-editor-author="{{ current_user.name }}"
+    data-editor-apiendpoint="/storeme/8438783-39493-344"
+    data-editor-imageUpload="/photos/upload"
+    data-editor-imageFetchURL="/photos/get-image"
+    data-editor-linkEndPoint="/links/getlink">
+
+    <div class="container">
+      <div class="row">
+        <div class="input-field col s12">
+          <input data-target="editor.headline" type="text" placeholder="Título"/>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-field  col s6">
+          <input type="text" data-target="editor.creditline" value="Por {{ current_user.name }}"/>
+        </div>
+        <div class="col s6">
+          <div class="chips chips-placeholder" id="keywords"></div>
+          <span class="helper-text" data-error="wrong" data-success="right">
+            Ingrese la palabra clave y presione <code class="grey darken-3 white-text p-1">enter</code>
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- <div class="container">
+      <div class="row">
+        <div class="col s12">
+          <h4 class="center-align  grey-text text-lighten-1">Contenido</h4>
+          <hr />
+        </div>
+      </div>
+    </div> -->
+    <div id="editorContent" data-target="editor.content" class="browser-default-uls flow-text mt-5">
+    </div>
+
+    <div class="fixed-action-btn editor-tool-box">
+      <a class="btn-floating btn-large disabled" data-action="editor#guardar" title="Guardar">
+        <i class="large material-icons">save</i>
+      </a>
+      <ul>
+        <li><a class="btn-floating red darken-2" title="Borrar"><i class="material-icons">delete</i></a></li>
+        <li><a class="btn-floating" title="Vista previa"><i class="material-icons">pageview</i></a></li>
+        <li><a class="btn-floating" title="Enviar"><i class="material-icons">send</i></a></li>
+      </ul>
+    </div>
+
+</div>
+{% endblock %}
+
+
+{% block page_js %}
+<script src="{{ url_for('static', filename='js/editorcomp.js') }}"></script>
+{% endblock %}

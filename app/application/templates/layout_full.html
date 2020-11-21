@@ -3,10 +3,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-    <title>{% block page_title %}Title{% endblock %} - Redacción</title>
+    <title>{% block page_title %}Title{% endblock %}</title>
 
     <!-- CSS  -->
-    <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
     <link href="{{ url_for('static', filename='css/style.css') }}" type="text/css" rel="stylesheet" media="screen,projection"/>
     <link href="{{ url_for('static', filename='css/utils.css') }}" type="text/css" rel="stylesheet" media="screen,projection"/>
 
@@ -15,7 +14,7 @@
 <body>
     <header>
       <div class="navbar-fixed">
-        <nav >
+        <nav class="">
           <div class="nav-wrapper container">
             <div class="brand-logo">
               <a href="{{ url_for('default.index') }}">
@@ -36,33 +35,35 @@
       </div>
     </header>
     <main>
-
+       
         <!-- main section -->
         <div class="row mt-3">
-          <div class="col s3">
-            {% block sidebar %}
-              {% if current_user.is_authenticated %}
-                <ul class="collection">
-                  <a href="{{ url_for('users.logout') }}" class="collection-item">
-                    Salir
-                    <span class="secondary-content">
-                      <i class="material-icons">logout</i>
-                    </span>
-                  </a>
-                </ul>
-              {% endif %}
-            {% endblock %}
+          <div class="col s12">
+              {% block breadcrumb %}
+              <nav class="">
+                  <div class="nav-wrapper">
+                    <div class="col s12">
+                      <a href="#!" class="breadcrumb">First</a>
+                      <a href="#!" class="breadcrumb">Second</a>
+                      <a href="#!" class="breadcrumb">Third</a>
+                    </div>
+                  </div>
+              </nav>
+              {% endblock %}
           </div>
-          <div class="col s9">
-            {% block content %}
-            {% endblock %}
-          </div>
+        </div>
+
+        <div class="row mt-3"> 
+            <div class="col s12">
+                {% block content %}
+                {% endblock %}
+            </div>
         </div>
     </main>
     <footer class="page-footer">
         <!-- the footer -->
         <div class="footer-copyright">
-          <div class="container">
+          <div class="container ">
             © 2020 Redacción Adelante, por Yoel Benítez Fonseca
             <a class="right" href="https://www.python.org/" target="_blanck">
               Powered by Python

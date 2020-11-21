@@ -141,6 +141,9 @@ cython_debug/
 .vscode
 node_modules/
 .sass-cache/
-application/static/css/style.css
-application/static/css/utils.css
+# application/static/css/style.css
+# application/static/css/utils.css
 *.map
+jsclient/editorjs_link
+jsclient/image
+jsclient/warning
