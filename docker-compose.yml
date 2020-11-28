@@ -27,10 +27,14 @@ services:
             SECRET_KEY: sjBf743/dJkaut3hdbf9mqwdNJuqSJ4413mdnduhrFSqT
             SQLALCHEMY_DATABASE_URI: mysql+pymysql://authdb:f9mqwdNJuqSJFSqT@db_auth/authdb
             FLASK_APP: application:create_app('config.Config')
+            UPLOAD_FOLDER: "/uploads"
         expose: 
             - 5000
         volumes:
             - ./app:/src
+            - ./uploads:/uploads
+        extra_hosts:
+            - "intranet.adelante.lan:192.168.2.2"
 
     web:
         build: ./nginx

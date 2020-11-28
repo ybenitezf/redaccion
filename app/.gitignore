@@ -112,6 +112,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.flaskenv
 
 # Spyder project settings
 .spyderproject
@@ -141,9 +142,10 @@ cython_debug/
 .vscode
 node_modules/
 .sass-cache/
-# application/static/css/style.css
-# application/static/css/utils.css
 *.map
 jsclient/editorjs_link
 jsclient/image
 jsclient/warning
+*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].*
+*.gz
+cache_manifest.json

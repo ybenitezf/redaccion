@@ -17,8 +17,8 @@
 <div data-controller="editor"
     data-editor-author="{{ current_user.name }}"
     data-editor-apiendpoint="/storeme/8438783-39493-344"
-    data-editor-imageUpload="/photos/upload"
-    data-editor-imageFetchURL="/photos/get-image"
+    data-editor-imageUpload="{{ url_for('default.upload_image') }}"
+    data-editor-imageFetchURL="{{ url_for('default.fetch_image') }}"
     data-editor-linkEndPoint="/links/getlink">
 
     <div class="container">
@@ -42,14 +42,6 @@
 
     </div>
 
-    <!-- <div class="container">
-      <div class="row">
-        <div class="col s12">
-          <h4 class="center-align  grey-text text-lighten-1">Contenido</h4>
-          <hr />
-        </div>
-      </div>
-    </div> -->
     <div id="editorContent" data-target="editor.content" class="browser-default-uls flow-text mt-5">
     </div>
 
@@ -69,5 +61,5 @@
 
 
 {% block page_js %}
-<script src="{{ url_for('static', filename='js/editorcomp.js') }}"></script>
+<script src="{{ static_url_for('static', filename='js/editorcomp.js') }}"></script>
 {% endblock %}

@@ -32,15 +32,23 @@ class Article(db.Model):
     @hybrid_property
     def keywords(self):
         if self._kws is not None:
-            return self._kws.split(',')
+            return self._kws.split('|')
         
         return []
     
     @keywords.setter
     def keywords(self, value):
-        self._kws = ','.join(value)
+        self._kws = '|'.join(value)
 
 
     @keywords.comparator
     def keywords(cls):
         return IsInComparator(cls._kws)
+
+
+class ImageModel(db.Model):
+    id = db.Column(db.String(32), primary_key=True)
+    filename = db.Column(db.Text())
+    upload_by = db.Column(
+        db.String(32), db.ForeignKey('user.id'), nullable=True)
+    uploader = db.relationship('User', lazy=True)

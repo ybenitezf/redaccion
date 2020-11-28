@@ -7,6 +7,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_principal import Principal
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_caching import Cache
+from flask_static_digest import FlaskStaticDigest
 from flask import Flask
 from werkzeug.middleware.proxy_fix import ProxyFix
 import logging
@@ -19,6 +20,7 @@ admon = Admin()
 principal = Principal()
 devtoolbar = DebugToolbarExtension()
 cache = Cache()
+flask_statics = FlaskStaticDigest()
 
 def create_app(config):
     """Inicializar la aplicación"""
@@ -42,6 +44,7 @@ def create_app(config):
     principal.init_app(app)
     # devtoolbar.init_app(app)
     cache.init_app(app)
+    flask_statics.init_app(app)
 
     # incluir modulos y rutas
     with app.app_context():

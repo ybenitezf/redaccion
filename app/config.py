@@ -12,6 +12,8 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
     CACHE_TYPE = 'redis'
     CACHE_REDIS_URL = "redis://redis:6379/"
+    UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER') or '/tmp'
+    IMAGES_EXTENSIONS = {'png', 'jpg', 'jpeg', 'tiff', 'gif'}
     
     # ldap integration
     LDAP_AUTH = False

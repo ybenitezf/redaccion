@@ -7,17 +7,17 @@
 
   <!-- CSS  -->
   <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
-  <link href="{{ url_for('static', filename='css/style.css') }}" type="text/css" rel="stylesheet" media="screen,projection"/>
-  <link href="{{ url_for('static', filename='css/utils.css') }}" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="{{ static_url_for('static', filename='css/style.css') }}" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="{{ static_url_for('static', filename='css/utils.css') }}" type="text/css" rel="stylesheet" media="screen,projection"/>
 
   {% block htmlhead %}{% endblock %}
 </head>
 <body>
   {% block content %}{% endblock %}
   <!--  Scripts-->
-  <script src="{{ url_for('static', filename='js/jquery-2.1.1.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/materialize.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/init.js') }}"></script>
+  <script src="{{ static_url_for('static', filename='js/jquery-2.1.1.min.js') }}"></script>
+  <script src="{{ static_url_for('static', filename='js/materialize.min.js') }}"></script>
+  <script src="{{ static_url_for('static', filename='js/init.js') }}"></script>
   {% block page_js %}{% endblock %}
   </body>
 </html>
