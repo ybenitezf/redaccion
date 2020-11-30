@@ -28,6 +28,15 @@ services:
             SQLALCHEMY_DATABASE_URI: mysql+pymysql://authdb:f9mqwdNJuqSJFSqT@db_auth/authdb
             FLASK_APP: application:create_app('config.Config')
             UPLOAD_FOLDER: "/uploads"
+            # comentar si no son necesarios
+            HTTP_PROXY: "http://192.168.2.2:3128"
+            HTTPS_PROXY: "http://192.168.2.2:3128"
+            FTP_PROXY: "http://192.168.2.2:3128"
+            NO_PROXY: "intranet.adelante.lan,*.adelante.lan,.adelante.lan"
+            http_proxy: "http://192.168.2.2:3128"
+            https_proxy: "http://192.168.2.2:3128"
+            ftp_proxy: "http://192.168.2.2:3128"
+            no_proxy: "intranet.adelante.lan,*.adelante.lan,.adelante.lan"
         expose: 
             - 5000
         volumes:
