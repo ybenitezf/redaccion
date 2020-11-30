@@ -21,7 +21,7 @@
     "@editorjs/editorjs": "^2.17.0",
     "@editorjs/header": "^2.4.0",
     "@editorjs/image": "https://github.com/ybenitezf/image",
-    "@editorjs/link": "link:editorjs_link",
+    "@editorjs/link": "^2.3.1",
     "@editorjs/list": "^1.4.0",
     "@editorjs/paragraph": "^2.6.1",
     "@editorjs/quote": "^2.3.0",

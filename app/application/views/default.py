@@ -5,6 +5,8 @@ from flask import Blueprint, jsonify, render_template, request, current_app
 from flask import send_from_directory, url_for
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
+from urllib.parse import urlparse
+from webpreview import OpenGraph
 import tempfile
 import os
 
@@ -74,8 +76,9 @@ def upload_image():
                     'default.uploaded_image', 
                     filename=im.filename, 
                     _external=True),
-                "md5sum": im.id
-            }
+                "md5sum": im.id,
+            },
+            "credit": "Foto de {}".format(im.uploader.name)
         }
     
     current_app.logger.debug("Filename not valid")
@@ -88,15 +91,21 @@ def fetch_image():
     if 'url' not in request.json:
         return {"success": 0}
 
+    url = request.json['url']
+    # extract the hostname from url
+    if urlparse(url).netloc:
+        credit = "Tomada de {}".format(urlparse(url).netloc)
+    else:
+        credit = "Tomada de Internet"
+
     try:
-        im = handleURL(
-            request.json['url'], current_user.id, 
+        im = handleURL(url, current_user.id, 
             current_app.config['UPLOAD_FOLDER'])
         db.session.add(im)
         db.session.commit()
     except Exception:
         current_app.logger.exception(
-            "Can't get the url {}".format(request.json['url']))
+            "Can't get the url {}".format(url))
         return {"success": 0}
 
     return {
@@ -106,6 +115,42 @@ def fetch_image():
                 'default.uploaded_image', 
                 filename=im.filename, 
                 _external=True),
-            "md5sum": im.id
-        }
+            "md5sum": im.id,
+        },
+        "credit": credit
     }
+
+
+@default.route('/fetch-link', methods=['GET'])
+def fetch_link():
+    _l = current_app.logger
+    if request.args.get('url'):
+        url = request.args.get('url')
+        try:
+            _l.debug("Retrieving: {}".format(url))
+            info = OpenGraph(
+                url, [
+                    'og:title', 'og:description', 'og:image', 'og:site_name'])
+            im = handleURL(
+                info.image, current_user.id, 
+                current_app.config['UPLOAD_FOLDER'])
+            return {
+                'success': 1,
+                'meta': {
+                    'title': info.title,
+                    'description': info.description,
+                    'site_name': info.site_name,
+                    'image': {
+                        'url': url_for(
+                            'default.uploaded_image', 
+                            filename=im.filename, 
+                            _external=True),
+                        'md5sum': im.id
+                    }
+                }
+            }
+        except Exception as e:
+            _l.exception("Ocurrio un error procesando el enlace")
+            return {'success': 0}
+
+    return {"success" : 0}
