@@ -139,6 +139,7 @@ dmypy.json
 cython_debug/
 
 
+# especificos de la app
 .vscode
 node_modules/
 .sass-cache/
@@ -149,3 +150,7 @@ jsclient/warning
 *-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].*
 *.gz
 cache_manifest.json
+application/static/js/editorcomp.js
+application/static/js/init.js
+application/static/css/utils.css
+application/static/css/style.css
