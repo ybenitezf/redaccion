@@ -100,6 +100,7 @@ export default class extends Controller {
           },
         },
       },
+      i18n: {},
       placeholder: 'Da clic aquí para comenzar a escribir',
       data: data,
 
