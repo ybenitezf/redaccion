@@ -27,6 +27,7 @@ def index():
 
 
 @default.route('/escribir')
+@login_required
 def write():
     return render_template('default/write.html')
 
@@ -39,6 +40,7 @@ def uploaded_image(filename):
 
 
 @default.route('/upload-image', methods=['POST'])
+@login_required
 def upload_image():
     """Handler editorjs images"""
 
@@ -86,6 +88,7 @@ def upload_image():
 
 
 @default.route('/fetch-image', methods=['POST'])
+@login_required
 def fetch_image():
     """Download & handle images urls from editorjs"""
     if 'url' not in request.json:
@@ -122,6 +125,7 @@ def fetch_image():
 
 
 @default.route('/fetch-link', methods=['GET'])
+@login_required
 def fetch_link():
     _l = current_app.logger
     if request.args.get('url'):
@@ -149,8 +153,9 @@ def fetch_link():
                     }
                 }
             }
-        except Exception as e:
+        except Exception:
             _l.exception("Ocurrio un error procesando el enlace")
             return {'success': 0}
 
     return {"success" : 0}
+

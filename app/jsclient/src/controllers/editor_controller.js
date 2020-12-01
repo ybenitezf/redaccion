@@ -7,7 +7,8 @@ import Delimiter from '@editorjs/delimiter';
 import Warning from '@editorjs/warning';
 import Paragraph from '@editorjs/paragraph';
 import Header from '@editorjs/header';
-import LinkTool from '@editorjs/link'
+import LinkTool from '@editorjs/link';
+import RawTool from '@editorjs/raw';
 
 const axios = require('axios').default;
 
@@ -99,6 +100,12 @@ export default class extends Controller {
             author: this.data.get("author")
           },
         },
+        rawCode: {
+          class: RawTool,
+          config: {
+            placeholder: 'Pegar código aqui'
+          }
+        }
       },
       i18n: {},
       placeholder: 'Da clic aquí para comenzar a escribir',
