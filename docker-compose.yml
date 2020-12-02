@@ -2,8 +2,8 @@ version: '3'
 
 services: 
 
-    db_auth:
-        image: mariadb:5.5.60
+    database:
+        image: mysql
         restart: always
         environment: 
             MYSQL_ROOT_PASSWORD: sjBf743/dJk
@@ -11,7 +11,7 @@ services:
             MYSQL_USER: authdb
             MYSQL_PASSWORD: f9mqwdNJuqSJFSqT
         volumes:
-            - authdb:/var/lib/mysql
+            - ./database:/var/lib/mysql
 
     redis:
         image: redis
@@ -20,12 +20,12 @@ services:
         build: ./app
         restart: always
         depends_on: 
-            - db_auth
+            - database
             - redis
         command: gunicorn "application:create_app('config.Config')" --log-level=debug --reload -b 0.0.0.0:5000
         environment: 
             SECRET_KEY: sjBf743/dJkaut3hdbf9mqwdNJuqSJ4413mdnduhrFSqT
-            SQLALCHEMY_DATABASE_URI: mysql+pymysql://authdb:f9mqwdNJuqSJFSqT@db_auth/authdb
+            SQLALCHEMY_DATABASE_URI: mysql+pymysql://authdb:f9mqwdNJuqSJFSqT@database/authdb
             FLASK_APP: application:create_app('config.Config')
             UPLOAD_FOLDER: "/uploads"
             # comentar si no son necesarios
@@ -55,5 +55,3 @@ services:
         depends_on: 
             - app
 
-volumes:
-    authdb:
