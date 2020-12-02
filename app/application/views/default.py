@@ -1,8 +1,9 @@
 from application.modules.imagetools import handleImageUpload, handleURL
 from application.models.content import Article, ImageModel
+from application.models import _gen_uuid
 from application import filetools, db
 from flask import Blueprint, jsonify, render_template, request, current_app
-from flask import send_from_directory, url_for
+from flask import send_from_directory, url_for, abort, json
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from urllib.parse import urlparse
@@ -23,13 +24,23 @@ def allowed_file(filename):
 @default.route('/')
 @login_required
 def index():
-    return render_template('default/index.html')
+    page = request.args.get('page', 1, type=int)
+
+    articulos = Article.query.filter(
+        Article.author_id == current_user.id).order_by(
+            Article.created_on.desc()).paginate(page, per_page=4)
+
+    return render_template(
+        'default/index.html', results=articulos)
 
 
-@default.route('/escribir')
+@default.route('/escribir', defaults={"pkid": None})
+@default.route('/escribir/<pkid>')
 @login_required
-def write():
-    return render_template('default/write.html')
+def write(pkid):
+    if pkid is None:
+        pkid = _gen_uuid()
+    return render_template('default/write.html', pkid=pkid)
 
 
 @default.route('/assets/images/<filename>')
@@ -159,3 +170,61 @@ def fetch_link():
 
     return {"success" : 0}
 
+
+@default.route('/article/<pkid>', methods=['GET', 'POST'])
+@login_required
+def articleEndPoint(pkid):
+    if len(pkid) != 32:
+        # bad request
+        abort(400)
+
+    article = Article.query.get(pkid)
+
+    if request.method == 'GET':
+        if article is None:
+            # this is a new one, just generate de defaults
+            # --
+            return {
+                'headline': '',
+                'creditline': 'Por {}'.format(current_user.name),
+                'keywords': [],
+                'content': {}
+            }
+        else:
+            # turn article into a json object and return
+            return {
+                'headline': article.headline,
+                'creditline': article.credit_line,
+                'keywords': article.keywords,
+                'content': article.getDecodedContent()
+            }
+
+    if request.method == 'POST':
+        if article is None:
+            # this is a new one and request.json['uuid'] is mandatory
+            current_app.logger.debug("Creating a new Article")
+            article = Article(
+                headline=request.json['headline'],
+                credit_line=request.json['creditline'],
+                content=json.dumps(request.json['content']),
+                author_id=current_user.id,
+            )
+            article.keywords = request.json['keywords']
+            db.session.add(article)
+            db.session.commit()
+
+            return {"success": 1}
+        else:
+            # save article changes
+            current_app.logger.debug("Saving article {}".format(article.id))
+            article.headline = request.json['headline']
+            article.credit_line = request.json['creditline']
+            article.content = json.dumps(request.json['content'])
+            article.keywords = request.json['keywords']
+            db.session.add(article)
+            db.session.commit()
+
+            return {"success": 1}
+
+    # something went worng
+    return {"success": 0}, 500

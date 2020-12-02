@@ -3,6 +3,7 @@ from sqlalchemy.ext.hybrid import hybrid_property, Comparator
 from application import db
 from application.models import _gen_uuid
 from datetime import datetime
+import json
 
 class Board(db.Model):
     name = db.Column(db.String(60), primary_key=True)
@@ -28,6 +29,23 @@ class Article(db.Model):
     author_id = db.Column(
         db.String(32), db.ForeignKey('user.id'), nullable=True)
     author = db.relationship('User', lazy=True)
+
+    def getDecodedContent(self):
+        if not hasattr(self, '_decodedcontent'):
+            self._decodedcontent = json.loads(self.content)
+        return self._decodedcontent
+
+    def getFirstTextBlock(self):
+        blocks = self.getDecodedContent().get('blocks')
+        if blocks is None:
+            return ""
+
+        for block in blocks:
+            if block.get('type') == 'paragraph':
+                if block.get('data'):
+                    return block.get('data').get('text')
+
+        return ""
 
     @hybrid_property
     def keywords(self):

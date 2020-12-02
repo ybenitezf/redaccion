@@ -14,6 +14,9 @@ class Config(object):
     CACHE_REDIS_URL = "redis://redis:6379/"
     UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER') or '/tmp'
     IMAGES_EXTENSIONS = {'png', 'jpg', 'jpeg', 'tiff', 'gif'}
+    SQLALCHEMY_ENGINE_OPTIONS: {
+        'pool_pre_ping': True
+    }
     
     # ldap integration
     LDAP_AUTH = False

@@ -14,7 +14,7 @@
 {% block content %}
 <div data-controller="editor"
     data-editor-author="{{ current_user.name }}"
-    data-editor-apiendpoint="/storeme/8438783-39493-344"
+    data-editor-apiendpoint="{{ url_for('default.articleEndPoint', pkid=pkid) }}"
     data-editor-imageUpload="{{ url_for('default.upload_image') }}"
     data-editor-imageFetchURL="{{ url_for('default.fetch_image') }}"
     data-editor-linkEndPoint="{{ url_for('default.fetch_link') }}">
@@ -28,10 +28,10 @@
 
       <div class="row">
         <div class="input-field  col s6">
-          <input type="text" data-target="editor.creditline" value="Por {{ current_user.name }}"/>
+          <input type="text" data-target="editor.creditline" value=""/>
         </div>
         <div class="col s6">
-          <div class="chips chips-placeholder" id="keywords"></div>
+          <div class="chips chips-placeholder" data-target="editor.tags"></div>
           <span class="helper-text" data-error="wrong" data-success="right">
             Ingrese la palabra clave y presione <code class="grey darken-3 white-text p-1">enter</code>
           </span>

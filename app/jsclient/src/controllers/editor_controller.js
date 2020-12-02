@@ -14,7 +14,7 @@ const axios = require('axios').default;
 
 export default class extends Controller {
 
-  static targets = [ "content" ]
+  static targets = ["content", "headline", "creditline", "tags"]
 
   initialize() {
     this.loadEditorJS.bind(this)
@@ -22,24 +22,36 @@ export default class extends Controller {
 
   connect() {
     const apiUrl = this.data.get("apiendpoint");
-    var tags = document.getElementById('keywords');
-    M.Chips.init(tags, {
+    M.Chips.init(this.tagsTarget, {
       placeholder: "Plabras clave"
     });
-    this.loadEditorJS({})
     // cargar datos del editor desde remoto
-    // axios.get(apiUrl).then(
-    //   (response) => this.loadEditorJS(response.data)
-    // ).catch((error) => {
-    //     this.loadEditorJS({})
-    //     console.log(error)
-    //     console.log("No pude cargar " + apiUrl)
-    // })
+    axios.get(apiUrl).then(
+      (response) => this.loadEditorJS(response.data)
+    ).catch((error) => {
+        this.loadEditorJS({})
+        console.log(error)
+        console.log("No pude cargar " + apiUrl)
+        M.toast({
+          html: '<b>ERROR</b>: No se pudo recuperar la información',
+          classes: 'rounded red darken-4'
+        })
+    })
   }
 
   loadEditorJS(data) {
     $('.editor-tool-box').floatingActionButton();
 
+    this.headlineTarget.value = data.headline;
+    this.creditlineTarget.value = data.creditline;
+    var tags = M.Chips.getInstance(this.tagsTarget);
+    if (data.keywords) {
+      data.keywords.forEach((keyword) => 
+        tags.addChip({
+          tag: keyword
+        })
+      )
+    }
     this.editor = new EditorJS({
       holder: this.contentTarget.id,
 
@@ -109,9 +121,11 @@ export default class extends Controller {
       },
       i18n: {},
       placeholder: 'Da clic aquí para comenzar a escribir',
-      data: data,
+      data: data.content,
 
-      onReady: () => this.enableGuardar()
+      onReady: () => {
+        this.enableGuardar()
+      }
     });
   }
 
@@ -129,12 +143,25 @@ export default class extends Controller {
     // desactivar el boton un momento
     const apiUrl = this.data.get("apiendpoint");
     this.disableGuardar();
+    var keywords = [];
+    M.Chips.getInstance(this.tagsTarget).chipsData.forEach((tagData) => {
+      keywords.push(tagData.tag);
+    })
 
-    this.editor.save().then( (outData) => {
-      axios.put(apiUrl, outData).then(function (response) {
-        M.toast({html: 'Tus cambios han sido guardados'})
+    this.editor.save().then( (editorData) => {
+      const outData = {
+        headline: this.headlineTarget.value,
+        creditline: this.creditlineTarget.value,
+        keywords: keywords,
+        content: editorData
+      }
+      axios.post(apiUrl, outData).then(function (response) {
+        M.toast({html: 'Tus cambios han sido guardados', classes: 'rounded'})
       }).catch( function (error) {
-        M.toast({html: 'No se pudo guardar, error en el servidor'})
+        M.toast({
+          html: '<b>ERROR</b>: No se pudo guardar, error en el servidor',
+          classes: 'rounded red darken-4'
+        })
         console.log('Saving failed: ', error)
       })
     });
