@@ -40,7 +40,10 @@ def index():
 def write(pkid):
     if pkid is None:
         pkid = _gen_uuid()
-    return render_template('default/write.html', pkid=pkid)
+
+    article = Article.query.get(pkid)
+
+    return render_template('default/write.html', pkid=pkid, article=article)
 
 
 @default.route('/assets/images/<filename>')

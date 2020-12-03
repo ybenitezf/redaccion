@@ -1,6 +1,6 @@
 {% extends 'layout_full.html' %}
 
-{% block page_title %}Escribir{% endblock %}
+{% block page_title %}{{'Escribir - Redacción' if article is none else article.headline}}{% endblock %}
 
 {% block breadcrumb %}
 <nav class="px-3">
