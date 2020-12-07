@@ -4,6 +4,7 @@ module.exports = {
     context: __dirname,
     entry: {
       editorcomp: './src/editor.js',
+      photostore: './src/photostore/index.js'
     },
     output: {
         path: path.resolve( __dirname, '../application/static/js' ),
@@ -15,6 +16,10 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 use: 'babel-loader',
+            },
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
             }
         ]
     },

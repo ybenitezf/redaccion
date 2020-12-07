@@ -27,7 +27,9 @@
             <ul class="right hide-on-med-and-down">
               <li><a href="{{ url_for('default.index') }}">Mi trabajo</a></li>
               <li><a href="#!">Envios</a></li>
-              <li><a href="#!">Fotos</a></li>
+              {% if config.get('PHOTOSTORE_ENABLED') %}
+              <li><a href="{{ url_for('photos.index') }}">Fotos</a></li>
+              {% endif %}
               {% if current_user.is_authenticated %}
               <li><a href="{{ url_for('users.logout') }}"><i class="material-icons">logout</i></a></li>
               {% endif %}

@@ -3,7 +3,6 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_ldap3_login import LDAP3LoginManager
 from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
 from flask_principal import Principal
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_caching import Cache
@@ -58,6 +57,13 @@ def create_app(config):
         app.register_blueprint(default)
         app.register_blueprint(users_bp)
         login_mgr.login_view = 'users.login'
+
+        if app.config.get('PHOTOSTORE_ENABLED'):
+            from application.photostore import photostore
+            from application.photostore import photostore_api
+            app.register_blueprint(photostore, url_prefix='/photostore')
+            app.register_blueprint(
+                photostore_api, url_prefix='/photostore/api')
 
         # admon views 
         admon.add_view(UserView())

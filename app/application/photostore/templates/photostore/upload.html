@@ -1,0 +1,86 @@
+{% extends 'layout_full.html' %}
+
+{% block page_title %}Subir fotos - Almacén de fotos{% endblock %}
+
+
+{% block breadcrumb %}
+<nav class="px-3">
+    <div class="nav-wrapper">
+        <a href="{{ url_for('.index') }}" class="breadcrumb">Coberturas</a>
+        <a href="#!" class="breadcrumb">Subir cobertura</a>
+    </div>
+</nav>
+{% endblock %}
+
+
+{% block sidebar %}
+{% include 'photostore/_sidebar.html' %}
+
+{{ super() }}
+{% endblock %}
+
+
+{% block content %}
+    <div class="row" data-controller="newcov">
+
+        <div class="col s6">
+
+            <section>
+                <!-- dropzone -->
+                <div class="row">
+                    <div class="col s12">
+                       <div id="photos_drop" data-target="newcov.photos"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="col s6">
+            <section class="px-3">
+                <!-- fields -->
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input data-target="newcov.headline" type="text" name="headline" id="headline_field" class="validate" required autocomplete="off">
+                        <label for="headline_field">Título descriptivo</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input data-target="creditline" type="text" name="creditline" id="creditline_field" class="validate" value="Foto de {{ current_user.name }}" required>
+                        <label for="creditline_field">Creditos</label>
+                    </div>
+                </div>
+        
+                <div class="row">
+                    <div class="input-field col s12">
+                        <div class="chips chips-placeholder" data-target="newcov.tags"></div>
+                        <span class="helper-text" data-error="wrong" data-success="right">
+                            Ingrese la palabra clave y presione <code class="grey darken-3 white-text p-1">enter</code>
+                        </span>
+                    </div>
+                </div>
+        
+                <div class="row">
+                    <div class="input-field col s12">
+                        <div id="excerpt_field" data-target="newcov.resumen"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col s12">
+                        <a class="waves-effect waves-light btn-large" data-action="click->newcov#save" data-target="newcov.sendbtn">
+                            <i class="material-icons right">send</i>Crear
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+{% endblock content %}
+
+
+{% block page_js %}
+<script src="{{ static_url_for('static', filename='js/photostore.js') }}"></script>
+{% endblock %}

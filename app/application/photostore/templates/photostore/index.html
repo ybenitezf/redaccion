@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}Coberturas - Almacén de fotos{% endblock %}
+
+
+
+{% block sidebar %}
+{% include 'photostore/_sidebar.html' %}
+
+{{ super() }}
+{% endblock %}
+
+
+{% block content %}
+<h1>Hello</h1>
+
+<p>
+    Aqui va el listado de las images y fotos en el sistema
+</p>
+{% endblock content %}

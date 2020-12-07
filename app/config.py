@@ -14,7 +14,7 @@ class Config(object):
     CACHE_REDIS_URL = "redis://redis:6379/"
     UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER') or '/tmp'
     IMAGES_EXTENSIONS = {'png', 'jpg', 'jpeg', 'tiff', 'gif'}
-    SQLALCHEMY_ENGINE_OPTIONS: {
+    SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_pre_ping': True
     }
     
@@ -30,6 +30,10 @@ class Config(object):
     LDAP_BIND_USER_PASSWORD = 'zp3N7qvu'
     # --
     DEBUG_TB_INTERCEPT_REDIRECTS = False
+
+    # blueprints
+    PHOTOSTORE_ENABLED = True
+    # --
 
 class TestConfig(Config):
     TESTING = True
