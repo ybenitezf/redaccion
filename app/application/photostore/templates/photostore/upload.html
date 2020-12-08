@@ -21,7 +21,7 @@
 
 
 {% block content %}
-    <div class="row" data-controller="newcov">
+    <div class="row" data-controller="newcov" data-newcov-uploadendpoint-value="{{ url_for('photos.handle_upload') }}">
 
         <div class="col s6">
 
@@ -29,7 +29,7 @@
                 <!-- dropzone -->
                 <div class="row">
                     <div class="col s12">
-                       <div id="photos_drop" data-target="newcov.photos"></div>
+                       <div id="photos_drop" data-newcov-target="photos"></div>
                     </div>
                 </div>
             </section>
@@ -40,20 +40,20 @@
                 <!-- fields -->
                 <div class="row">
                     <div class="input-field col s12">
-                        <input data-target="newcov.headline" type="text" name="headline" id="headline_field" class="validate" required autocomplete="off">
+                        <input data-newcov-target="headline" type="text" name="headline" id="headline_field" class="validate" required autocomplete="off">
                         <label for="headline_field">Título descriptivo</label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
-                        <input data-target="creditline" type="text" name="creditline" id="creditline_field" class="validate" value="Foto de {{ current_user.name }}" required>
+                        <input data-newcov-target="creditline" type="text" name="creditline" id="creditline_field" class="validate" value="Foto de {{ current_user.name }}" required>
                         <label for="creditline_field">Creditos</label>
                     </div>
                 </div>
         
                 <div class="row">
                     <div class="input-field col s12">
-                        <div class="chips chips-placeholder" data-target="newcov.tags"></div>
+                        <div class="chips chips-placeholder" data-newcov-target="tags"></div>
                         <span class="helper-text" data-error="wrong" data-success="right">
                             Ingrese la palabra clave y presione <code class="grey darken-3 white-text p-1">enter</code>
                         </span>
@@ -62,13 +62,13 @@
         
                 <div class="row">
                     <div class="input-field col s12">
-                        <div id="excerpt_field" data-target="newcov.resumen"></div>
+                        <div id="excerpt_field" data-newcov-target="resumen"></div>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col s12">
-                        <a class="waves-effect waves-light btn-large" data-action="click->newcov#save" data-target="newcov.sendbtn">
+                        <a class="waves-effect waves-light btn-large" data-action="click->newcov#save" data-newcov-target="sendbtn">
                             <i class="material-icons right">send</i>Crear
                         </a>
                     </div>

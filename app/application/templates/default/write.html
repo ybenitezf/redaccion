@@ -22,16 +22,16 @@
     <div class="container">
       <div class="row">
         <div class="input-field col s12">
-          <input data-target="editor.headline" type="text" placeholder="Título"/>
+          <input data-editor-target="headline" type="text" placeholder="Título"/>
         </div>
       </div>
 
       <div class="row">
         <div class="input-field  col s6">
-          <input type="text" data-target="editor.creditline" value=""/>
+          <input type="text" data-editor-target="creditline" value=""/>
         </div>
         <div class="col s6">
-          <div class="chips chips-placeholder" data-target="editor.tags"></div>
+          <div class="chips chips-placeholder" data-editor-target="tags"></div>
           <span class="helper-text" data-error="wrong" data-success="right">
             Ingrese la palabra clave y presione <code class="grey darken-3 white-text p-1">enter</code>
           </span>
@@ -40,7 +40,7 @@
 
     </div>
 
-    <div id="editorContent" data-target="editor.content" class="browser-default-uls flow-text mt-5">
+    <div id="editorContent" data-editor-target="content" class="browser-default-uls flow-text mt-5">
     </div>
 
     <div class="fixed-action-btn editor-tool-box">

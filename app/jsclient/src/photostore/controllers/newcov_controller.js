@@ -1,5 +1,6 @@
 import { Controller } from "stimulus";
 import EditorJS from "@editorjs/editorjs";
+import validate, { async } from "validate.js";
 const Validator = require('validate.js');
 const Uppy = require("@uppy/core");
 const XHRUpload = require("@uppy/xhr-upload");
@@ -13,7 +14,30 @@ const restricciones = {
     headline: {
         presence: {
             allowEmpty: false,
-            message: "no puede estar vacio"
+            message: "^Título no puede estar vacio"
+        }
+    },
+    keywords: {
+        presence: {
+            allowEmpty: false,
+            message: "^Debes incluir palabras clave"
+        }
+    },
+    excerpt: {
+        presence: {
+            allowEmpty: false,
+            message: "^Describe estas imágenes"
+        },
+        length: function (value, attributes, attributeName, options, constraints) {
+            if ( value ) {
+                if ( validate.isEmpty(value.blocks) ) {
+                    return {message: "^Describe estas imágenes"}
+                } else {
+                    return null
+                }
+            }
+
+            return false
         }
     }
 }
@@ -23,6 +47,10 @@ export default class extends Controller {
     static targets = [
         "resumen", "tags", "headline", "creditline", "photos"
     ]
+
+    static values = {
+        uploadendpoint: String
+    }
 
     initialize() {
         console.log("Inicializando newcov")
@@ -61,7 +89,8 @@ export default class extends Controller {
             target: this.photosTarget,
             height: 480
         }).use(XHRUpload, {
-            endpoint: 'http://no.existe.com'
+            fieldName: 'image',
+            endpoint: this.uploadendpointValue
         })
     }
 
@@ -71,17 +100,18 @@ export default class extends Controller {
         }
     }
 
-    isValid() {
+    isValid(values) {
         // validar el formulario
-        var values = {
-            headline: this.headlineTarget.value
-        }
-
         const results = Validator(values, restricciones)
 
         if (results) {
-            // aqui hay un error
-            console.log(results)
+            // aqui hay errores
+            for (const [field, msg] of Object.entries(results) ) {
+                M.toast({
+                    html: msg,
+                    classes: 'red rounded'
+                });
+            }
             return false
         }
         
@@ -93,11 +123,45 @@ export default class extends Controller {
         event.stopPropagation();
         this.disableGuardar();
 
-        if (this.isValid()) {
-            console.log("Todo correcto")
-        } else {
-            console.log("Faltan datos")
-        }
+        // recopilar los datos, el editor tiene prioridad
+        var tags = [];
+        M.Chips.getInstance(this.tagsTarget).chipsData.forEach((tagData) => {
+          tags.push(tagData.tag);
+        })
+        this.editor.save().then((description) => {
+
+            var values = {
+                headline: this.headlineTarget.value,
+                keywords: tags,
+                excerpt: description
+            }
+
+            console.log(values)
+            if (this.isValid(values)) {
+                console.log("Todo correcto de momento ...")
+                // agregar información a los metas de las imagenes
+                // values.excerpt debe ser convertido a string
+                values.excerpt = JSON.stringify(description)
+                this.uppy.setMeta(values)
+
+                // intentar mandar las fotos 
+                this.uppy.upload().then((result) => {
+                    console.info('Successful uploads:', result.successful)
+                  
+                    if (result.failed.length > 0) {
+                      console.error('Errors:')
+                      result.failed.forEach((file) => {
+                        console.error(file.error)
+                      })
+                    }
+                })
+                // enviar la información al servidor
+            } else {
+                console.log("Faltan datos")
+            }
+
+        })
+
         this.enableGuardar();
     }
 
