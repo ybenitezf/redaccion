@@ -151,6 +151,7 @@ jsclient/warning
 *.gz
 cache_manifest.json
 application/static/js/editorcomp.js
+application/static/js/photostore.js
 application/static/js/init.js
 application/static/css/utils.css
 application/static/css/style.css
