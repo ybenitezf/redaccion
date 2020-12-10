@@ -58,16 +58,18 @@ def create_app(config):
         app.register_blueprint(users_bp)
         login_mgr.login_view = 'users.login'
 
-        if app.config.get('PHOTOSTORE_ENABLED'):
-            from application.photostore import photostore
-            from application.photostore import photostore_api
-            app.register_blueprint(photostore, url_prefix='/photostore')
-            app.register_blueprint(
-                photostore_api, url_prefix='/photostore/api')
-
         # admon views 
         admon.add_view(UserView())
         admon.add_view(RoleView())
         admon.add_view(PermissionView())
+
+        if app.config.get('PHOTOSTORE_ENABLED'):
+            from application.photostore import photostore
+            from application.photostore import photostore_api
+            from application.photostore.admin import VolumeAdminView
+            app.register_blueprint(photostore, url_prefix='/photostore')
+            app.register_blueprint(
+                photostore_api, url_prefix='/photostore/api')
+            admon.add_view(VolumeAdminView())
 
     return app

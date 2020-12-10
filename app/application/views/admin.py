@@ -10,7 +10,7 @@ from flask_login import current_user, login_required
 from flask import url_for, redirect, request
 
 
-admin_permission = PrincipalPermission(RoleNeed('administrador'))
+admin_permission = PrincipalPermission(RoleNeed('admin'))
 
 
 class MyAdminIndexView(AdminIndexView):

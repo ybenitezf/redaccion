@@ -1,7 +1,12 @@
-from .models import PhotoCoverage
-from flask_login import login_required
+from application.photostore.models import PhotoCoverage
+from application.photostore.utiles import StorageController
+from application import filetools
+from flask_login import login_required, current_user
 from flask import Blueprint, current_app, render_template, abort
-from flask import request
+from flask import request, json
+from werkzeug.utils import secure_filename
+import os
+import tempfile
 
 photostore = Blueprint(
     'photos', __name__, template_folder='templates')
@@ -21,15 +26,37 @@ def upload_coverture():
 
 
 @photostore.route('/upload', methods=['POST'])
-def handle_upload():
+def handle_upload():   
     if 'image' not in request.files:
         current_app.logger.debug("not file send")
         abort(400)
 
     file = request.files.get('image')
-    current_app.logger.debug(type(file))
-    current_app.logger.debug(file.filename)
-    current_app.logger.debug(request.form)
+    if file.filename == '':
+        return {'message': 'Ivalid image'}, 400
 
-    current_app.logger.debug("return empy")
-    return {}, 400
+    if filetools.allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        fullname = os.path.join(tempfile.mkdtemp(), filename)
+        file.save(fullname)
+        # Procesar la imagen aqui
+        # -- 
+        keywords = request.form.get('keywords').split(',')
+        user_data = {
+            'headline': request.form.get('headline'),
+            'creditline': request.form.get('creditline'),
+            'keywords': list(filter(None, keywords)),
+            'excerpt': request.form.get('excerpt'),
+            'uploader': current_user.id
+        }
+        im = StorageController.getInstance().processPhoto(
+            fullname, user_data
+        )
+        if im:
+            # retornar la información de la imagen procesada, sobre
+            # todo el md5 o id de la imagen
+            return {'md5': im.md5}
+        else:
+            return {"message": "Invalid image"}, 400
+    
+    return {"message": "Something went worng"}, 400

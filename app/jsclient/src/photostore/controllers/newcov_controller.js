@@ -17,10 +17,22 @@ const restricciones = {
             message: "^Título no puede estar vacio"
         }
     },
+    creditline: {
+        presence: {
+            allowEmpty: false,
+            message: "^Debes poner los creditos"
+        }
+    },
     keywords: {
         presence: {
             allowEmpty: false,
             message: "^Debes incluir palabras clave"
+        }
+    },
+    files: {
+        presence: {
+            allowEmpty: false,
+            message: "^Debes seleccionar al menos una foto"
         }
     },
     excerpt: {
@@ -50,10 +62,6 @@ export default class extends Controller {
 
     static values = {
         uploadendpoint: String
-    }
-
-    initialize() {
-        console.log("Inicializando newcov")
     }
 
     disableGuardar() {
@@ -132,16 +140,21 @@ export default class extends Controller {
 
             var values = {
                 headline: this.headlineTarget.value,
+                creditline: this.creditlineTarget.value,
                 keywords: tags,
-                excerpt: description
+                excerpt: description,
+                files: this.uppy.getFiles()
             }
 
-            console.log(values)
             if (this.isValid(values)) {
-                console.log("Todo correcto de momento ...")
                 // agregar información a los metas de las imagenes
                 // values.excerpt debe ser convertido a string
                 values.excerpt = JSON.stringify(description)
+                // values.keywords debe ser json tambien pues es una lista
+                values.keywords = JSON.stringify(tags)
+                // --
+                // eliminar los files de aqui tambien
+                delete values.files
                 this.uppy.setMeta(values)
 
                 // intentar mandar las fotos 
@@ -156,8 +169,6 @@ export default class extends Controller {
                     }
                 })
                 // enviar la información al servidor
-            } else {
-                console.log("Faltan datos")
             }
 
         })

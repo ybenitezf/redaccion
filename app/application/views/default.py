@@ -1,8 +1,8 @@
 from application.modules.imagetools import handleImageUpload, handleURL
-from application.models.content import Article, ImageModel
+from application.models.content import Article
 from application.models import _gen_uuid
 from application import filetools, db
-from flask import Blueprint, jsonify, render_template, request, current_app
+from flask import Blueprint, render_template, request, current_app
 from flask import send_from_directory, url_for, abort, json
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
@@ -13,12 +13,6 @@ import os
 
 
 default = Blueprint('default', __name__)
-
-
-def allowed_file(filename):
-    ALLOWED_EXTENSIONS = current_app.config.get('IMAGES_EXTENSIONS')
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @default.route('/')
@@ -70,7 +64,7 @@ def upload_image():
         current_app.logger.debug("Empty file name")
         return {"success": 0}
 
-    if file and allowed_file(file.filename):
+    if file and filetools.allowed_file(file.filename):
         # do the actual thing
         filename = secure_filename(file.filename)
         fullname = os.path.join(tempfile.mkdtemp(), filename)

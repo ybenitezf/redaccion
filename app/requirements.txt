@@ -15,3 +15,5 @@ Flask-Static-Digest==0.1.4
 webpreview==1.6.0
 redis==3.5.3
 cryptography==3.2.1
+Pillow==8.0.1
+IPTCInfo3==2.1.4
