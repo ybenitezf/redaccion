@@ -33,6 +33,8 @@ class Config(object):
 
     # blueprints
     PHOTOSTORE_ENABLED = True
+    DEFAULT_VOL_SIZE = int(os.getenv('DEFAULT_VOL_SIZE', 0)) or 107374182400
+    DEFAULT_MEDIA_SIZE = int(os.getenv('DEFAULT_MEDIA_SIZE', 0)) or 4831838208
     # --
 
 class TestConfig(Config):

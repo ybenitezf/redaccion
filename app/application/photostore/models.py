@@ -10,8 +10,8 @@ from datetime import datetime
 import os
 
 
-DEFAULT_VOL_SIZE = 107374182400
-DEFAULT_MEDIA_SIZE = 4831838208
+DEFAULT_VOL_SIZE = app.config.get('DEFAULT_VOL_SIZE')
+DEFAULT_MEDIA_SIZE = app.config.get('DEFAULT_MEDIA_SIZE')
 
 FORMATOS_FECHA = [
     '%Y:%m:%d %H:%M:%S',
@@ -74,7 +74,13 @@ class Volume(db.Model):
                         self.name, file_name))
                 return None
 
-        return m.storePhoto(file_name, md5, user_data, size, exif=exif)
+        photo = m.storePhoto(file_name, md5, user_data, size, exif=exif)
+        if photo:
+            # actualizar la capacidad ocupada
+            self.used += size
+            self.query.session.add(self)
+
+        return photo
 
     def canStoreBytes(self, bts) -> bool:
         return (self.used + bts) <= self.capacity

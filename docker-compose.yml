@@ -37,6 +37,8 @@ services:
             https_proxy: "http://192.168.2.2:3128"
             ftp_proxy: "http://192.168.2.2:3128"
             no_proxy: "intranet.adelante.lan,*.adelante.lan,.adelante.lan"
+            DEFAULT_VOL_SIZE: 107374182400
+            DEFAULT_MEDIA_SIZE: 4831838208
         expose: 
             - 5000
         volumes:
