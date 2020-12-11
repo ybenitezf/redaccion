@@ -7,7 +7,9 @@ from flask_principal import Principal
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_caching import Cache
 from flask_static_digest import FlaskStaticDigest
-from flask import Flask
+from apifairy import APIFairy
+from flask_marshmallow import Marshmallow
+from flask import Flask, render_template
 from werkzeug.middleware.proxy_fix import ProxyFix
 import logging
 
@@ -20,6 +22,8 @@ principal = Principal()
 devtoolbar = DebugToolbarExtension()
 cache = Cache()
 flask_statics = FlaskStaticDigest()
+apifairy = APIFairy()
+ma = Marshmallow()
 
 def create_app(config):
     """Inicializar la aplicación"""
@@ -44,6 +48,8 @@ def create_app(config):
     # devtoolbar.init_app(app)
     cache.init_app(app)
     flask_statics.init_app(app)
+    ma.init_app(app)
+    apifairy.init_app(app)
 
     # incluir modulos y rutas
     with app.app_context():

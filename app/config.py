@@ -17,6 +17,7 @@ class Config(object):
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_pre_ping': True
     }
+    APIFAIRY_UI = 'swagger_ui'
     
     # ldap integration
     LDAP_AUTH = False

@@ -21,7 +21,10 @@
 
 
 {% block content %}
-    <div class="row" data-controller="newcov" data-newcov-uploadendpoint-value="{{ url_for('photos.handle_upload') }}">
+    <div 
+        class="row" data-controller="newcov" 
+        data-newcov-uploadendpoint-value="{{ url_for('photos.handle_upload') }}"
+        data-newcov-api-value="{{ url_for('photos_api.create_coverage') }}">
 
         <div class="col s6">
 
@@ -68,7 +71,7 @@
 
                 <div class="row">
                     <div class="col s12">
-                        <a class="waves-effect waves-light btn-large" data-action="click->newcov#save" data-newcov-target="sendbtn">
+                        <a class="waves-effect waves-light btn" data-action="click->newcov#save" data-newcov-target="sendbtn">
                             <i class="material-icons right">send</i>Crear
                         </a>
                     </div>

@@ -6,6 +6,7 @@ const Uppy = require("@uppy/core");
 const XHRUpload = require("@uppy/xhr-upload");
 const Dashboard = require("@uppy/dashboard");
 const SpanishUppy = require("@uppy/locales/lib/es_ES");
+const axios = require('axios').default;
 
 require('@uppy/core/dist/style.css')
 require('@uppy/dashboard/dist/style.css')
@@ -61,7 +62,8 @@ export default class extends Controller {
     ]
 
     static values = {
-        uploadendpoint: String
+        uploadendpoint: String,
+        api: String
     }
 
     disableGuardar() {
@@ -159,16 +161,38 @@ export default class extends Controller {
 
                 // intentar mandar las fotos 
                 this.uppy.upload().then((result) => {
-                    console.info('Successful uploads:', result.successful)
-                  
-                    if (result.failed.length > 0) {
-                      console.error('Errors:')
-                      result.failed.forEach((file) => {
-                        console.error(file.error)
-                      })
+                    var fotos = []
+                    if (result.successful.length > 0) {
+                        result.successful.forEach((file) => {
+                            // copiamos los ids de las fotos que se subieron
+                            // correctamente
+                            fotos.push(file.response.body.md5)
+                        })
+                        // enviar la información al servidor
+                        var payload = {
+                            keywords: tags,
+                            photos: fotos,
+                            excerpt: JSON.stringify(description),
+                            headline: this.headlineTarget.value,
+                            credit_line: this.creditlineTarget.value
+                        }
+                        axios.post(this.apiValue, payload).then(function (response) {
+                            M.toast({html: 'Tus cambios han sido guardados', classes: 'rounded'})
+                          }).catch( function (error) {
+                            M.toast({
+                              html: '<b>ERROR</b>: No se pudo guardar, error en el servidor',
+                              classes: 'rounded red darken-4'
+                            })
+                          })
+                    } else {
+                        // no se pudo subir nada correctamente, aqui pasa
+                        // algo raro
+                        M.toast({
+                            html: "Algo esta mal con el servidor",
+                            classes: 'red rounded'
+                        });
                     }
                 })
-                // enviar la información al servidor
             }
 
         })
