@@ -26,6 +26,7 @@ def upload_coverture():
 
 
 @photostore.route('/upload', methods=['POST'])
+@login_required
 def handle_upload():
     """Handle uploads from uppy.js"""
     if 'image' not in request.files:

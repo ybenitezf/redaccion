@@ -24,7 +24,8 @@
     <div 
         class="row" data-controller="newcov" 
         data-newcov-uploadendpoint-value="{{ url_for('photos.handle_upload') }}"
-        data-newcov-api-value="{{ url_for('photos_api.create_coverage') }}">
+        data-newcov-api-value="{{ url_for('photos_api.create_coverage') }}"
+        data-newcov-postback-value="{{ url_for('photos.index') }}">
 
         <div class="col s6">
 

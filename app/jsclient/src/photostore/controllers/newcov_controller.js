@@ -63,7 +63,8 @@ export default class extends Controller {
 
     static values = {
         uploadendpoint: String,
-        api: String
+        api: String,
+        postback: String
     }
 
     disableGuardar() {
@@ -147,6 +148,7 @@ export default class extends Controller {
                 excerpt: description,
                 files: this.uppy.getFiles()
             }
+            const postback = this.postbackValue
 
             if (this.isValid(values)) {
                 // agregar información a los metas de las imagenes
@@ -178,11 +180,13 @@ export default class extends Controller {
                         }
                         axios.post(this.apiValue, payload).then(function (response) {
                             M.toast({html: 'Tus cambios han sido guardados', classes: 'rounded'})
+                            window.location.replace(postback);
                           }).catch( function (error) {
                             M.toast({
                               html: '<b>ERROR</b>: No se pudo guardar, error en el servidor',
                               classes: 'rounded red darken-4'
                             })
+                            console.log(error)
                           })
                     } else {
                         // no se pudo subir nada correctamente, aqui pasa
