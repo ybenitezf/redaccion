@@ -1,9 +1,9 @@
-from application.photostore.models import PhotoCoverage
+from application.photostore.models import Photo, PhotoCoverage
 from application.photostore.utiles import StorageController
 from application import filetools, db
 from flask_login import login_required, current_user
 from flask import Blueprint, current_app, render_template, abort
-from flask import request, json
+from flask import request, json, send_file
 from werkzeug.utils import secure_filename
 import os
 import tempfile
@@ -12,11 +12,21 @@ photostore = Blueprint(
     'photos', __name__, template_folder='templates')
 
 
+@photostore.route('/photo/preview/<id>')
+def photo_thumbnail(id):
+    p = Photo.query.get_or_404(id)
+    return send_file(p.thumbnail)
+
+
 @photostore.route('/')
 @login_required
 def index():
-    current_app.logger.debug(PhotoCoverage.query.all())
-    return render_template('photostore/index.html')
+    page = request.args.get('page', 1, type=int)
+
+    coberturas = PhotoCoverage.query.order_by(
+        PhotoCoverage.archive_on.desc()).paginate(page, per_page=4)
+
+    return render_template('photostore/index.html', coberturas=coberturas)
 
 
 @photostore.route('/upload-form')

@@ -12,9 +12,71 @@
 
 
 {% block content %}
-<h1>Hello</h1>
+<!-- <h1>Archivo de fotos</h1> -->
 
-<p>
-    Aqui va el listado de las images y fotos en el sistema
-</p>
+<div class="works-list px-5">
+
+    {% if coberturas.items: %}
+
+        {% for item in coberturas.items: %}
+        <div class="card">
+            <div class="card-content">
+              <!-- titulo -->
+              <span class="card-title photocoverage-headline blue-grey-text text-darken-2">{{ item.headline }}</span>
+              <!-- descripcion -->
+              <p class="photocoverage-excerpt">
+                  {{ item.excerpt }}
+              </p>
+              <!-- fotos -->
+              <div class="photocoverage-photos">
+                <div class="photos-container">
+                    {% for photo in item.photos %}
+                    <div>
+                        <a href="#!"><img src="{{ url_for('.photo_thumbnail', id=photo.md5) }}" alt=""></a>
+                    </div>
+                    {% endfor %}
+                </div>
+              </div>
+              <!-- // end fotos -->
+              <!-- palabras clave -->
+              <div class="photocoverage-keywords">
+                  <i class="material-icons left">local_offer</i> 
+                  {% for k in item.keywords %}
+                  <div class="chip">{{ k }}</div>
+                  {% endfor %}
+              </div>
+              <!-- creditos -->
+              <div class="photocoverage-creditline">
+                  <i class="material-icons left">person</i> {{ item.credit_line }}
+              </div>
+              <div class="photocoverage-archivedon">
+                  <i class="material-icons left">event</i> {{ item.archive_on.isoformat() }}
+              </div>
+            </div>
+            <div class="card-action">
+              <a href="#!">Detalles</a>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- paginacion -->
+        {% if coberturas.has_prev or coberturas.has_next %}
+        <div class="center-align mt-5">
+            <a href="{{ '#!' if coberturas.has_prev is false else url_for('.index', page=coberturas.prev_num)}}" class="waves-effect waves-light btn {{ 'disabled' if coberturas.has_prev is false else ''}}"><i class="material-icons left">chevron_left</i> Anterior</a>
+            <a href="{{ '#!' if coberturas.has_next is false else url_for('.index', page=coberturas.next_num)}}" class="waves-effect waves-light btn ml-5 {{ 'disabled' if coberturas.has_next is false else ''}}">Siguiente <i class="material-icons right">chevron_right</i></a>
+        </div>
+        {% endif %}
+    
+    {% else %}
+
+        <div class="card">
+        <div class="card-content">
+            <span class="card-title center-align">
+            No se encontró ninguna cobertura
+            </span>
+        </div>
+        </div>
+    
+    {% endif %}
+</div>
 {% endblock content %}
