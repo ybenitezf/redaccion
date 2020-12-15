@@ -15,6 +15,21 @@ services:
 
     redis:
         image: redis
+
+
+    search:
+        build: ./search
+        restart: always
+        environment: 
+            SECRET_KEY: 'some super secret'
+            FLASK_APP: application:create_app('config.Config')
+            FLASK_ENV: development
+            INDEX_BASE_DIR: "/indices"
+        expose: 
+            - 5000
+        volumes: 
+            - ./search_indices:/indices
+            - ./search:/src
     
     app:
         build: ./app

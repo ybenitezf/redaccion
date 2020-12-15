@@ -9,6 +9,7 @@ class Config(object):
     ENV = 'development'
     DEBUG = True
     SECRET_KEY = 'some-secret-of-my-own'
+    INDEX_BASE_DIR = os.getenv('INDEX_BASE_DIR') or '/tmp/myindexes'
 
 
 class TestConfig(Config):

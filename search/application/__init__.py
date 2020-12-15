@@ -9,9 +9,11 @@ def create_app(config):
 
     with app.app_context():
         # load some plugins, modules or blueprints
-        from application.views.api import api
+        from application.api import api
+        from application.commands import cmd
 
         # registrar los blueprints
         app.register_blueprint(api)
+        app.register_blueprint(cmd)
 
     return app
