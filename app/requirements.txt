@@ -19,3 +19,7 @@ Pillow==8.0.1
 IPTCInfo3==2.1.4
 apifairy==0.6.2
 marshmallow-sqlalchemy==0.24.1
+celery==5.0.4
+watchdog==1.0.1
+PyYAML==5.3.1
+argh==0.26.2

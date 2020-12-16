@@ -7,12 +7,16 @@ from flask_principal import Principal
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_caching import Cache
 from flask_static_digest import FlaskStaticDigest
+from flask_logs import LogSetup
 from apifairy import APIFairy
 from flask_marshmallow import Marshmallow
+from celery import Celery
 from flask import Flask, render_template
 from werkzeug.middleware.proxy_fix import ProxyFix
 import logging
+import os
 
+logs = LogSetup()
 db = SQLAlchemy()
 migrate = Migrate()
 login_mgr = LoginManager()
@@ -24,15 +28,15 @@ cache = Cache()
 flask_statics = FlaskStaticDigest()
 apifairy = APIFairy()
 ma = Marshmallow()
+celery = Celery(__name__)
 
-def create_app(config):
+def create_app(config='config.Config'):
     """Inicializar la aplicación"""
     app = Flask(__name__, instance_relative_config=False)
     app.config.from_object(config)
-
-    gunicorn_logger = logging.getLogger('gunicorn.error')
-    app.logger.handlers = gunicorn_logger.handlers
-    app.logger.setLevel(gunicorn_logger.level)
+    if os.getenv('APP_CONFIG') and (os.getenv('APP_CONFIG') != config):
+        app.config.from_object(os.getenv('APP_CONFIG'))
+    logs.init_app(app)
 
     app.wsgi_app = ProxyFix(
         app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, 
@@ -50,6 +54,7 @@ def create_app(config):
     flask_statics.init_app(app)
     ma.init_app(app)
     apifairy.init_app(app)
+    init_celery(celery, app)
 
     # incluir modulos y rutas
     with app.app_context():
@@ -83,3 +88,14 @@ def create_app(config):
             admon.add_view(PhotoCoverageAdminView())
 
     return app
+
+
+def init_celery(instance, app):
+    instance.conf.update(app.config)
+
+    class ContextTask(instance.Task):
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return self.run(*args, **kwargs)
+
+    instance.Task = ContextTask
