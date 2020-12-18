@@ -7,6 +7,14 @@ $photocoverage-elements: 'headline', 'excerpt', 'photos', 'keywords', 'creditlin
     }
 }
 
+.photocoverage-excerpt {
+  p {
+    font-size: 110%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
 .photocoverage-photos {
     @extend .grey, .lighten-3;
 

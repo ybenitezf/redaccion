@@ -193,6 +193,7 @@ class Media(db.Model):
         photo.excerpt = user_data.get('excerpt')
         photo.headline = user_data.get('headline')
         photo.upload_by = user_data.get('uploader')
+        photo.taken_by = user_data.get('taken_by')
 
         if exif:
             if 'DateTimeOriginal' in exif:
@@ -204,7 +205,7 @@ class Media(db.Model):
             elif 'DateTime' in exif:
                 photo.taken_on = probar_fecha(exif['DateTime'])
 
-            if 'Artist' in exif:
+            if 'Artist' in exif and (not user_data.get('taken_by')):
                 photo.taken_by = exif['Artist']
         else:
             # make now the default DateTimeOriginal

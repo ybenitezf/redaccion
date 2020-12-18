@@ -58,7 +58,7 @@ const restricciones = {
 export default class extends Controller {
 
     static targets = [
-        "resumen", "tags", "headline", "creditline", "photos"
+        "resumen", "tags", "headline", "creditline", "photos", "takenby"
     ]
 
     static values = {
@@ -144,6 +144,7 @@ export default class extends Controller {
             var values = {
                 headline: this.headlineTarget.value,
                 creditline: this.creditlineTarget.value,
+                takenby: this.takenbyTarget.value,
                 keywords: tags,
                 excerpt: description,
                 files: this.uppy.getFiles()

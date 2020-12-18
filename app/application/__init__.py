@@ -80,12 +80,14 @@ def create_app(config='config.Config'):
             from application.photostore.admin import VolumeAdminView
             from application.photostore.admin import MediaAdminView
             from application.photostore.admin import PhotoCoverageAdminView
+            from application.photostore.admin import PhotoAdminView
             app.register_blueprint(photostore, url_prefix='/photostore')
             app.register_blueprint(
                 photostore_api, url_prefix='/photostore/api')
             admon.add_view(VolumeAdminView())
             admon.add_view(MediaAdminView())
             admon.add_view(PhotoCoverageAdminView())
+            admon.add_view(PhotoAdminView())
 
     return app
 

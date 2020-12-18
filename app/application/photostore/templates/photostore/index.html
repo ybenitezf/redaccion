@@ -24,9 +24,9 @@
               <!-- titulo -->
               <span class="card-title photocoverage-headline blue-grey-text text-darken-2">{{ item.headline }}</span>
               <!-- descripcion -->
-              <p class="photocoverage-excerpt">
-                  {{ item.excerpt }}
-              </p>
+              <div class="photocoverage-excerpt">
+                  {{ render_excerpt(item.excerpt)|safe }}
+              </div>
               <!-- fotos -->
               <div class="photocoverage-photos">
                 <div class="photos-container">

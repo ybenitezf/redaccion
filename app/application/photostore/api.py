@@ -1,5 +1,5 @@
 from application import db
-from application.photostore.shemas import PhotoCoverageSchema
+from application.photostore.schemas import PhotoCoverageSchema
 from application.photostore.models import Photo, PhotoCoverage
 from apifairy import arguments, body, response, other_responses
 from flask_login import login_required, current_user

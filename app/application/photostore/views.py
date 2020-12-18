@@ -1,3 +1,4 @@
+from application.modules.editorjs import renderBlock
 from application.photostore.models import Photo, PhotoCoverage
 from application.photostore.utiles import StorageController
 from application import filetools, db
@@ -53,13 +54,14 @@ def handle_upload():
         file.save(fullname)
         # Procesar la imagen aqui
         # -- 
-        keywords = request.form.get('keywords').split(',')
+        keywords = json.loads(request.form.get('keywords'))
         user_data = {
             'headline': request.form.get('headline'),
             'creditline': request.form.get('creditline'),
             'keywords': list(filter(None, keywords)),
             'excerpt': request.form.get('excerpt'),
-            'uploader': current_user.id
+            'uploader': current_user.id,
+            'taken_by': request.form.get('takenby')
         }
         im = StorageController.getInstance().processPhoto(
             fullname, user_data
@@ -74,3 +76,15 @@ def handle_upload():
             return {"message": "Invalid image"}, 400
     
     return {"message": "Something went worng"}, 400
+
+
+@photostore.context_processor
+def render_excerpt_to_html():
+    def render_excerpt(in_data):
+        data = json.loads(in_data)
+        return render_template(
+            'photostore/editorjs/photo_except.html', 
+            data=data,
+            block_rederer=renderBlock)
+
+    return dict(render_excerpt=render_excerpt)

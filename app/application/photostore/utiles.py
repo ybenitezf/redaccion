@@ -17,12 +17,15 @@ def getImageInfo(filename):
 
     return ret
 
-@celery.task
 def makeThumbnail(original, destino):
     current_app.logger.debug("Haciendo tumbnail para {}".format(original))
     with Image.open(original) as im:
         im.thumbnail((360, 360), Image.ANTIALIAS)
         im.convert('RGB').save(destino, "JPEG", quality=60)
+
+@celery.task
+def makeThumbnailAsync(*args, **kwargs):
+    makeThumbnail(*args, **kwargs)
 
 
 class StorageController(object):
@@ -85,7 +88,10 @@ class StorageController(object):
                 thumb_dst = os.path.join(
                     current_app.config['UPLOAD_FOLDER'], 'thumb_{}{}'.format(
                         md5, '.jpg'))
-                makeThumbnail.delay(photo.fspath, thumb_dst)
+                if current_app.config.get('CELERY_ENABLED'):
+                    makeThumbnailAsync.delay(photo.fspath, thumb_dst)
+                else:
+                    makeThumbnail(photo.fspath, thumb_dst)
                 photo.thumbnail = thumb_dst
                 db.session.add(vol)
                 db.session.add(photo)

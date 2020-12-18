@@ -18,6 +18,7 @@ x-common-variables: &common-variables
     DEFAULT_VOL_SIZE: 107374182400
     DEFAULT_MEDIA_SIZE: 4831838208
     CELERY_BROKER_URL: 'redis://redis:6379'
+    CELERY_ENABLED: 'true'
 
 services: 
 
@@ -80,7 +81,7 @@ services:
         # en produccion ejecutar asi
         # command: celery -A worker.celery worker
         # para desarrollo solamente
-        command: watchmedo auto-restart --directory=/src --pattern=*.py --recursive -- celery -A worker.celery worker -l ERROR
+        command: watchmedo auto-restart --directory=/src --pattern=*.py --recursive -- celery -A worker.celery worker -l ERROR --concurrency=1
         environment: *common-variables
         expose: 
             - 5000
