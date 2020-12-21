@@ -23,10 +23,6 @@
             <div class="card-content">
               <!-- titulo -->
               <span class="card-title photocoverage-headline blue-grey-text text-darken-2">{{ item.headline }}</span>
-              <!-- descripcion -->
-              <div class="photocoverage-excerpt">
-                  {{ render_excerpt(item.excerpt)|safe }}
-              </div>
               <!-- fotos -->
               <div class="photocoverage-photos">
                 <div class="photos-container">
@@ -38,6 +34,10 @@
                 </div>
               </div>
               <!-- // end fotos -->
+              <!-- descripcion -->
+              <div class="photocoverage-excerpt">
+                {{ render_excerpt(item.excerpt)|safe }}
+              </div>
               <!-- palabras clave -->
               <div class="photocoverage-keywords">
                   <i class="material-icons left">local_offer</i> 
