@@ -1,4 +1,7 @@
+from pathlib import Path
+from application.modules.search import index_document, index_document_async
 from application.photostore.models import Photo, Volume
+from application.photostore.schemas import PhotoIndexSchema
 from application import filetools, db, celery
 from PIL import Image
 from PIL.ExifTags import TAGS
@@ -44,6 +47,14 @@ class StorageController(object):
             raise Exception("This class is a singleton!")
         else:
             StorageController.__instance = self
+
+    def indexPhoto(self, photo: Photo):
+        base = Path(current_app.config.get('INDEX_BASE_DIR'))
+        s = PhotoIndexSchema()
+        if current_app.config.get('CELERY_ENABLED'):
+            index_document_async.delay(str(base / 'photos'), s.dump(photo))
+        else:
+            index_document(base / 'photos', s.dump(photo))
 
     def processPhoto(self, file_name, user_data):
         """Inteta procesar y almacenar en el archivo una foto
@@ -93,6 +104,7 @@ class StorageController(object):
                 else:
                     makeThumbnail(photo.fspath, thumb_dst)
                 photo.thumbnail = thumb_dst
+                self.indexPhoto(photo)
                 db.session.add(vol)
                 db.session.add(photo)
                 db.session.commit()

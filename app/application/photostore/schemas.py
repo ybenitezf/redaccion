@@ -4,6 +4,7 @@ from application import ma
 from marshmallow import fields, post_dump
 from flask import json, current_app
 from flask import render_template
+from datetime import datetime
 
 class PhotoCoverageSchema(ma.SQLAlchemySchema):
     class Meta:
@@ -17,9 +18,11 @@ class PhotoCoverageSchema(ma.SQLAlchemySchema):
 
 
 class PhotoIndexSchema(ma.Schema):
+    """Schema de la foto para indexar con Whoosh"""
+
     md5 = fields.Str()
-    archive_on = fields.DateTime()
-    taken_on = fields.DateTime()
+    archive_on = fields.DateTime(format="%Y%m%d%H%M%S")
+    taken_on = fields.DateTime(format="%Y%m%d%H%M%S")
     taken_by = fields.Str()
     archived = fields.Boolean()
     keywords = fields.List(fields.Str())
