@@ -2,8 +2,8 @@ $photocoverage-elements: 'headline', 'excerpt', 'photos', 'keywords', 'creditlin
 
 @each $c in $photocoverage-elements {
     .photocoverage-#{$c} {
-        margin-top: 10px !important;
-        margin-bottom: 10px !important;
+        margin-top: 1.2rem;
+        margin-bottom: 1.2rem;
     }
 }
 
