@@ -54,7 +54,8 @@ def create_app(config='config.Config'):
     flask_statics.init_app(app)
     ma.init_app(app)
     apifairy.init_app(app)
-    init_celery(celery, app)
+    if app.config.get('CELERY_ENABLED'):
+        init_celery(celery, app)
 
     # incluir modulos y rutas
     with app.app_context():
