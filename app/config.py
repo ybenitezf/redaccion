@@ -20,6 +20,7 @@ class Config(object):
         'pool_pre_ping': True
     }
     APIFAIRY_UI = 'swagger_ui'
+    INDEX_BASE_DIR = os.getenv('INDEX_BASE_DIR') or '/tmp/myindexes'
     
     # ldap integration
     LDAP_AUTH = False

@@ -47,7 +47,8 @@ def create_app(config='config.Config'):
     migrate.init_app(app, db)
     login_mgr.init_app(app)
     login_mgr.login_message = "Inicie sesión para acceder a esta página"
-    ldap_mgr.init_app(app)
+    if app.config.get('LDAP_AUTH'):
+        ldap_mgr.init_app(app)
     principal.init_app(app)
     # devtoolbar.init_app(app)
     cache.init_app(app)
@@ -61,6 +62,7 @@ def create_app(config='config.Config'):
     with app.app_context():
         from application.views.default import default
         from application.views.users import users_bp
+        from application.searchcommands import cmd as search_cmd
         from application.views.admin import MyAdminIndexView, UserView
         from application.views.admin import RoleView, PermissionView
 
@@ -68,6 +70,7 @@ def create_app(config='config.Config'):
         # registrar los blueprints
         app.register_blueprint(default)
         app.register_blueprint(users_bp)
+        app.register_blueprint(search_cmd)
         login_mgr.login_view = 'users.login'
 
         # admon views 

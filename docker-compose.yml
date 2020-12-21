@@ -19,6 +19,7 @@ x-common-variables: &common-variables
     DEFAULT_MEDIA_SIZE: 4831838208
     CELERY_BROKER_URL: 'redis://redis:6379'
     CELERY_ENABLED: 'true'
+    INDEX_BASE_DIR: "/indices"
 
 services: 
 
@@ -39,20 +40,6 @@ services:
             - 6379
 
 
-    search:
-        build: ./search
-        restart: always
-        environment: 
-            SECRET_KEY: 'some super secret'
-            FLASK_APP: application:create_app('config.Config')
-            FLASK_ENV: development
-            INDEX_BASE_DIR: "/indices"
-        expose: 
-            - 5000
-        volumes: 
-            - ./search_indices:/indices
-            - ./search:/src
-    
     app:
         image: appimage
         build: ./app
@@ -69,6 +56,7 @@ services:
         volumes:
             - ./app:/src
             - ./uploads:/uploads
+            - ./search_indices:/indices
         extra_hosts:
             - "intranet.adelante.lan:192.168.2.2"
 
@@ -88,6 +76,7 @@ services:
         volumes:
             - ./app:/src
             - ./uploads:/uploads
+            - ./search_indices:/indices
         extra_hosts:
             - "intranet.adelante.lan:192.168.2.2"
 
