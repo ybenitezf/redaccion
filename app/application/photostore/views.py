@@ -1,16 +1,22 @@
+from application.photostore.forms import SearchPhotosForm
 from application.modules.editorjs import renderBlock
 from application.photostore.models import Photo, PhotoCoverage
 from application.photostore.utiles import StorageController
 from application import filetools, db
+from whoosh.filedb.filestore import FileStorage
+from whoosh.qparser import MultifieldParser
 from flask_login import login_required, current_user
+from flask_breadcrumbs import register_breadcrumb, default_breadcrumb_root
 from flask import Blueprint, current_app, render_template, abort
 from flask import request, json, send_file
+from pathlib import Path
 from werkzeug.utils import secure_filename
 import os
 import tempfile
 
 photostore = Blueprint(
     'photos', __name__, template_folder='templates')
+default_breadcrumb_root(photostore, '.default')
 
 
 @photostore.route('/photo/preview/<id>')
@@ -19,18 +25,60 @@ def photo_thumbnail(id):
     return send_file(p.thumbnail)
 
 
+@photostore.route('/photo/details/<id>')
+@register_breadcrumb(photostore, '.index.id', 'Foto')
+def photo_details(id):
+    p = Photo.query.get_or_404(id)
+    return render_template('photostorage/photo_details.html', foto=p)
+
+
 @photostore.route('/')
+@register_breadcrumb(photostore, '.index', 'Fotos')
 @login_required
 def index():
     page = request.args.get('page', 1, type=int)
-
+    form = SearchPhotosForm()
     coberturas = PhotoCoverage.query.order_by(
         PhotoCoverage.archive_on.desc()).paginate(page, per_page=4)
 
-    return render_template('photostore/index.html', coberturas=coberturas)
+    return render_template(
+        'photostore/index.html', coberturas=coberturas, form=form)
+
+
+@photostore.route('/search', methods=['GET', 'POST'])
+@register_breadcrumb(photostore, '.index.buscar_indice', 'Buscar')
+@login_required
+def buscar_indice():
+    form = SearchPhotosForm()
+    userquery = ""
+
+    if form.validate_on_submit():
+        userquery = form.userquery.data
+
+    # hacer la busqueda aqui
+    base = Path(current_app.config.get('INDEX_BASE_DIR'))
+    store = FileStorage(str(base / 'photos'))
+    ix = store.open_index()
+    qp = MultifieldParser([
+        "headline", "excerpt", "credit_line",
+        "taken_by", "keywords"], ix.schema)
+    photos = []
+    keywords_grp = {}
+    with ix.searcher() as s:
+        results = s.search(qp.parse(userquery), groupedby="keywords")
+        keywords_grp = results.groups("keywords")
+        try:
+            photos = [Photo.query.get(r.get('md5')) for r in results]
+        except Exception as e:
+            current_app.logger.exception("Hay un problema aqui")
+
+    return render_template(
+        'photostore/search.html', form=form,
+        fotos=photos, por_keywords=keywords_grp)
 
 
 @photostore.route('/upload-form')
+@register_breadcrumb(photostore, '.index.upload_coverture', 'Subir cobertura')
 @login_required
 def upload_coverture():
     return render_template('photostore/upload.html')

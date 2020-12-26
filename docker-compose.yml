@@ -47,7 +47,8 @@ services:
         depends_on: 
             - database
             - redis
-        command: gunicorn "application:create_app()" --log-level=error --reload -b 0.0.0.0:5000
+        # command: gunicorn "application:create_app()" --log-level=debug --reload -b 0.0.0.0:5000
+        command: flask run --host=0.0.0.0
         environment: 
             <<: *common-variables
             SECRET_KEY: sjBf743/dJkaut3hdbf9mqwdNJuqSJ4413mdnduhrFSqT

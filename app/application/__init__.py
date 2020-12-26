@@ -1,3 +1,4 @@
+from flask.helpers import url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -8,10 +9,11 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_caching import Cache
 from flask_static_digest import FlaskStaticDigest
 from flask_logs import LogSetup
+from flask_breadcrumbs import Breadcrumbs, register_breadcrumb
 from apifairy import APIFairy
 from flask_marshmallow import Marshmallow
 from celery import Celery
-from flask import Flask, render_template
+from flask import Flask, redirect
 from werkzeug.middleware.proxy_fix import ProxyFix
 import logging
 import os
@@ -29,6 +31,9 @@ flask_statics = FlaskStaticDigest()
 apifairy = APIFairy()
 ma = Marshmallow()
 celery = Celery(__name__)
+crumbs = Breadcrumbs()
+# Breadcrumbs is a subclass of flask_menu.Menu
+menu = crumbs
 
 def create_app(config='config.Config'):
     """Inicializar la aplicación"""
@@ -54,6 +59,7 @@ def create_app(config='config.Config'):
     cache.init_app(app)
     flask_statics.init_app(app)
     ma.init_app(app)
+    crumbs.init_app(app)
     apifairy.init_app(app)
     if app.config.get('CELERY_ENABLED'):
         init_celery(celery, app)
@@ -92,6 +98,12 @@ def create_app(config='config.Config'):
             admon.add_view(MediaAdminView())
             admon.add_view(PhotoCoverageAdminView())
             admon.add_view(PhotoAdminView())
+
+        # the dummy thing
+        @app.route("/")
+        @register_breadcrumb(app, '.', "Inicio")
+        def home():
+            return redirect(url_for('default.index'))
 
     return app
 

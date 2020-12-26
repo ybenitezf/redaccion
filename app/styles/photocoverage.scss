@@ -48,3 +48,19 @@ $photocoverage-elements: 'headline', 'excerpt', 'photos', 'keywords', 'creditlin
       }
     }
 }
+
+
+.photos-search-results {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-content: flex-start;
+  align-items: flex-start;
+  height: 100%;
+}
+
+.photo-search-results-item {
+  width: 300px;
+  height: auto;
+  margin: 0.5rem;
+}

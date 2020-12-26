@@ -24,3 +24,5 @@ watchdog==1.0.1
 PyYAML==5.3.1
 argh==0.26.2
 Whoosh==2.7.4
+Flask-Breadcrumbs==0.5.1
+Flask-Menu==0.7.2

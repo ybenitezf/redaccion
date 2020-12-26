@@ -2,15 +2,6 @@
 
 {% block page_title %}{{'Escribir - Redacción' if article is none else article.headline}}{% endblock %}
 
-{% block breadcrumb %}
-<nav class="px-3">
-    <div class="nav-wrapper">
-        <a href="{{ url_for('default.index') }}" class="breadcrumb">Mi trabajo</a>
-        <a href="#!" class="breadcrumb">Escribir</a>
-    </div>
-</nav>
-{% endblock %}
-
 {% block content %}
 <div data-controller="editor"
     data-editor-author="{{ current_user.name }}"

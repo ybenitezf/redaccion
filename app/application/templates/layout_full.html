@@ -37,13 +37,15 @@
         </nav>
       </div>
       {% block breadcrumb %}
+      {% if breadcrumbs|length > 2 %}
       <nav class="px-3">
           <div class="nav-wrapper">
-              <a href="#!" class="breadcrumb">First</a>
-              <a href="#!" class="breadcrumb">Second</a>
-              <a href="#!" class="breadcrumb">Third</a>
+            {% for breadcrumb in breadcrumbs %}
+            <a href="{{ breadcrumb.url }}" class="breadcrumb">{{ breadcrumb.text }}</a>
+            {% endfor %}
           </div>
       </nav>
+      {% endif %}
       {% endblock %}
     </header>
     <main>

@@ -24,7 +24,6 @@ def create():
 @cmd.cli.command('reindex')
 def reindex():
     """Indexar todos los objetos"""
-    base = Path(current_app.config.get('INDEX_BASE_DIR'))
     if current_app.config.get('PHOTOSTORE_ENABLED'):
         current_app.logger.debug("Indexando photos")
         from application.photostore.models import Photo

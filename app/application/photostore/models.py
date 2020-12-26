@@ -207,6 +207,15 @@ class Media(db.Model):
 
             if 'Artist' in exif and (not user_data.get('taken_by')):
                 photo.taken_by = exif['Artist']
+
+            if exif.get('FNumber'):
+                photo.fnumber = float(exif.get('FNumber'))
+            photo.camera = exif.get('Model')
+            photo.focal = exif.get('FocalLengthIn35mmFilm')
+            photo.isovalue = exif.get('ISOSpeedRatings')
+            photo.software = exif.get('Software')
+            if exif.get('ExposureTime'):
+                photo.exposuretime = str(exif.get('ExposureTime').conjugate())
         else:
             # make now the default DateTimeOriginal
             photo.taken_on = datetime.now()
@@ -264,6 +273,12 @@ class Photo(db.Model):
     credit_line = db.Column(db.String(160), default='')
     excerpt = db.Column(db.Text(), default='')
     headline = db.Column(db.String(512), default='')
+    fnumber = db.Column(db.Float)
+    camera = db.Column(db.String(100))
+    focal = db.Column(db.Integer)
+    isovalue = db.Column(db.Integer)
+    software = db.Column(db.String(200))
+    exposuretime = db.Column(db.String(10))
 
     @hybrid_property
     def keywords(self):

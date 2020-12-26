@@ -10,6 +10,27 @@ import os
 
 
 def getImageInfo(filename):
+    """Read Image Exif Info
+    
+    retorna dict con las llaves:
+    {
+        ExifImageWidth: 0
+        ExifImageHeight: 0
+        DateTimeOriginal: '2020:12:15 14:45:17'
+        DateTimeDigitized: '2020:12:15 14:45:17'
+        FocalLength: 35.0
+        FocalLengthIn35mmFilm: 52
+        Make: 'NIKON CORPORATION'
+        Model: 'NIKON D90'
+        FNumber: 5.6
+        XResolution: 72
+        YResolution: 72
+        ISOSpeedRatings: 400
+        Software: GIMP X.Y.Z
+        DateTime: '2020:12:16 13:29:30'
+        Artist: 'Fulano de tal'
+    }
+    """
     ret = {}
 
     with Image.open(filename) as im:

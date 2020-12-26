@@ -1,5 +1,5 @@
 <ul class="collection">
-    <a href="{{ url_for('photos.index') }}" class="collection-item {% if request.path == url_for('photos.index') %}active{%endif%}">
+    <a href="{{ url_for('photos.index') }}" class="collection-item {% if (request.path == url_for('photos.index') or request.path == url_for('photos.buscar_indice')) %}active{%endif%}">
         Coberturas
     </a>
     <a href="{{ url_for('photos.upload_coverture') }}" class="collection-item {% if request.path == url_for('photos.upload_coverture') %}active{%endif%}">

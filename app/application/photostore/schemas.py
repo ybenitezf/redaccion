@@ -33,6 +33,7 @@ class PhotoIndexSchema(ma.Schema):
     @post_dump
     def process_excerpt(self, data, many, **kwargs):
         field_data = json.loads(data.get('excerpt'))
+        data['keywords'] = ",".join(data.get('keywords'))
         data['excerpt'] = render_template(
             'photostore/editorjs/photo_excerpt.txt', 
             data=field_data, 

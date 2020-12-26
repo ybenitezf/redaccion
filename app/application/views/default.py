@@ -5,6 +5,7 @@ from application import filetools, db
 from flask import Blueprint, render_template, request, current_app
 from flask import send_from_directory, url_for, abort, json
 from flask_login import login_required, current_user
+from flask_breadcrumbs import register_breadcrumb
 from werkzeug.utils import secure_filename
 from urllib.parse import urlparse
 from webpreview import OpenGraph
@@ -12,10 +13,11 @@ import tempfile
 import os
 
 
-default = Blueprint('default', __name__)
+default = Blueprint('default', __name__, url_prefix='/escritorio')
 
 
 @default.route('/')
+@register_breadcrumb(default, '.', 'Escritorio')
 @login_required
 def index():
     page = request.args.get('page', 1, type=int)
@@ -30,6 +32,7 @@ def index():
 
 @default.route('/escribir', defaults={"pkid": None})
 @default.route('/escribir/<pkid>')
+@register_breadcrumb(default, '.write', 'Escribir')
 @login_required
 def write(pkid):
     if pkid is None:

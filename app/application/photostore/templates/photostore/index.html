@@ -12,7 +12,21 @@
 
 
 {% block content %}
-<!-- <h1>Archivo de fotos</h1> -->
+<div class="row">
+    <form action="{{ url_for('.buscar_indice') }}" method="POST" class="col s12 px-5">
+        {{ form.csrf_token }}
+        <div class="col s11 input-field">
+            <i class="material-icons prefix">search</i>
+            <input id="userq_field" type="search" class="validate" name="userquery" required>
+            <label class="active" for="userq_field">Buscar</label>
+        </div>
+        <div class="col s1 input-field">
+            <button class="btn waves-effect waves-light" type="submit" name="action">
+                <i class="material-icons">search</i>
+            </button>
+        </div>
+    </form>
+</div>
 
 <div class="works-list px-5">
 
@@ -40,7 +54,7 @@
               </div>
               <!-- palabras clave -->
               <div class="photocoverage-keywords">
-                  <i class="material-icons left">local_offer</i> 
+                  <i class="material-icons left">label</i> 
                   {% for k in item.keywords %}
                   <div class="chip">{{ k }}</div>
                   {% endfor %}
@@ -80,3 +94,4 @@
     {% endif %}
 </div>
 {% endblock content %}
+
