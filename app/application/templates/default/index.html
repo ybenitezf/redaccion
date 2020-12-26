@@ -2,19 +2,6 @@
 
 {% block page_title %}Mis trabajos{% endblock %}
 
-{% block sidebar %}
-<ul class="collection">
-    <a href="{{ url_for('default.index') }}" class="collection-item {% if request.path == url_for('default.index') %}active{%endif%}">
-        Mi trabajo
-    </a>
-    <a href="{{ url_for('default.write') }}" class="collection-item">
-        Escribir
-    </a>
-</ul>
-
-{{ super() }}
-{% endblock %}
-
 {% block content %}
 <div class="works-list px-5">
 

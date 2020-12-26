@@ -1,0 +1,7 @@
+{% for navbarentry in current_menu.submenu("navbar").children %}
+    {% if navbarentry.children %}
+        {% for menu_item in  navbarentry.children %}
+        <li class="{{ 'active' if menu_item.active else '' }}"><a href="{{ menu_item.url }}">{{ menu_item.text|safe }}</a></li>
+        {% endfor %}
+    {%  endif %}
+{% endfor %}

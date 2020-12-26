@@ -10,6 +10,7 @@ from flask_caching import Cache
 from flask_static_digest import FlaskStaticDigest
 from flask_logs import LogSetup
 from flask_breadcrumbs import Breadcrumbs, register_breadcrumb
+from flask_menu import register_menu
 from apifairy import APIFairy
 from flask_marshmallow import Marshmallow
 from celery import Celery
@@ -102,8 +103,26 @@ def create_app(config='config.Config'):
         # the dummy thing
         @app.route("/")
         @register_breadcrumb(app, '.', "Inicio")
+        @register_menu(app, '.', "Inicio")
         def home():
             return redirect(url_for('default.index'))
+
+        @app.before_first_request
+        def setupMenus():
+            m = menu.root()
+
+            # navbar para el menu principal de la app
+            navbar = m.submenu("navbar")
+            navbar._external_url = "#!"
+            navbar._endpoint = None
+            navbar._text = "NAVBAR"
+
+            # actions, para el sidebar, registrar submenus debajo
+            # de este menu
+            actions = m.submenu("actions")
+            actions._external_url = "#!"
+            actions._endpoint = None
+            actions._text = "NAVBAR"
 
     return app
 

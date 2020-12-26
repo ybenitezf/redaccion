@@ -7,6 +7,7 @@ from whoosh.filedb.filestore import FileStorage
 from whoosh.qparser import MultifieldParser
 from flask_login import login_required, current_user
 from flask_breadcrumbs import register_breadcrumb, default_breadcrumb_root
+from flask_menu import register_menu, current_menu
 from flask import Blueprint, current_app, render_template, abort
 from flask import request, json, send_file
 from pathlib import Path
@@ -16,7 +17,21 @@ import tempfile
 
 photostore = Blueprint(
     'photos', __name__, template_folder='templates')
-default_breadcrumb_root(photostore, '.default')
+default_breadcrumb_root(photostore, '.')
+
+
+@photostore.before_app_first_request
+def setupMenus():
+    navbar = current_menu.submenu("navbar.photostore")
+    navbar._external_url = "#!"
+    navbar._endpoint = None
+    navbar._text = "NAVBAR"
+
+    # mis actions
+    actions = current_menu.submenu("actions.photostore")
+    actions._text = "Fotos"
+    actions._endpoint = None
+    actions._external_url = "#!"
 
 
 @photostore.route('/photo/preview/<id>')
@@ -34,6 +49,8 @@ def photo_details(id):
 
 @photostore.route('/')
 @register_breadcrumb(photostore, '.index', 'Fotos')
+@register_menu(photostore, 'navbar.photostore.index', 'Fotos')
+@register_menu(photostore, 'actions.photostore.index', 'Galerias')
 @login_required
 def index():
     page = request.args.get('page', 1, type=int)
@@ -47,6 +64,8 @@ def index():
 
 @photostore.route('/search', methods=['GET', 'POST'])
 @register_breadcrumb(photostore, '.index.buscar_indice', 'Buscar')
+@register_menu(
+    photostore, 'actions.photostore.buscar_indice', 'Buscar Fotos')
 @login_required
 def buscar_indice():
     form = SearchPhotosForm()
@@ -79,6 +98,8 @@ def buscar_indice():
 
 @photostore.route('/upload-form')
 @register_breadcrumb(photostore, '.index.upload_coverture', 'Subir cobertura')
+@register_menu(
+    photostore, 'actions.photostore.upload_coverture', 'Subir cobertura')
 @login_required
 def upload_coverture():
     return render_template('photostore/upload.html')
