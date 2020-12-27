@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col s12">
+        <h1 class="headline">
+            {{ foto.headline }}
+        </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col s4">
+        <img src="{{ url_for('.photo_thumbnail', id=foto.md5) }}" alt="" class="responsive-img">
+        <!-- toolbar -->
+        <a class="waves-effect waves-light btn disabled"><i class="material-icons">content_copy</i></a>
+        <a class="waves-effect waves-light btn disabled"><i class="material-icons">file_download</i></a>
+        <a class="waves-effect waves-light btn disabled"><i class="material-icons">edit</i></a>
+    </div>
+    <div class="col s8">
+        <div class="photocoverage-excerpt">
+            {{ render_excerpt(foto.excerpt)|safe }}
+        </div>
+        <div class="photocoverage-keywords">
+            <i class="material-icons left">label</i> 
+            {% for k in foto.keywords %}
+            <div class="chip">{{ k }}</div>
+            {% endfor %}
+        </div>
+        <div class="row">
+            <div class="col s6">
+                <p><i class="material-icons left">person</i> {{ foto.taken_by }}</p>
+                <p><i class="material-icons left">file_upload</i> {{foto.uploader.name}}</p>
+                <p><i class="material-icons left">event</i> {{foto.taken_on}}</p>
+            </div>
+            <div class="col s6">
+                <!-- opcionales -->
+                {% if foto.camera %}<p><i class="material-icons left">camera_alt</i> {{foto.camera}}</p>{% endif %}
+                {% if foto.fnumber %}<p><i class="material-icons left">camera</i> f/{{foto.fnumber}}</p>{% endif %}
+                {% if foto.exposuretime %}<p><i class="material-icons left">av_timer</i> {{foto.exposuretime}}s</p>{% endif %}
+                {% if foto.focal %}<p><i class="material-icons left">lens</i> {{foto.focal}}mm</p>{% endif %}
+                {% if foto.isovalue %}<p><i class="material-icons left">iso</i> {{foto.isovalue}}</p>{% endif %}
+                {% if foto.software %}<p><i class="material-icons left">brush</i> {{foto.software}}</p>{% endif %}
+                <!-- en opcionales -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

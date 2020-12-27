@@ -41,10 +41,10 @@ def photo_thumbnail(id):
 
 
 @photostore.route('/photo/details/<id>')
-@register_breadcrumb(photostore, '.index.id', 'Foto')
+@register_breadcrumb(photostore, '.index.id', 'Detalles')
 def photo_details(id):
     p = Photo.query.get_or_404(id)
-    return render_template('photostorage/photo_details.html', foto=p)
+    return render_template('photostore/photo_details.html', foto=p)
 
 
 @photostore.route('/')

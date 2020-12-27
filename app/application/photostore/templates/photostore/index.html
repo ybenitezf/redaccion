@@ -33,7 +33,7 @@
                 <div class="photos-container">
                     {% for photo in item.photos %}
                     <div>
-                        <a href="#!"><img src="{{ url_for('.photo_thumbnail', id=photo.md5) }}" alt=""></a>
+                        <a href="{{ url_for('.photo_details', id=photo.md5) }}"><img src="{{ url_for('.photo_thumbnail', id=photo.md5) }}" alt=""></a>
                     </div>
                     {% endfor %}
                 </div>
