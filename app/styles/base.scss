@@ -83,4 +83,26 @@ main {
   }
 }
 
+
+.exiftag {
+  display: inline-block;
+  height: 32px;
+  font-size: 14px;
+  font-weight: 500;
+  // color: rgba(0,0,0,.6);
+  line-height: 32px;
+  padding: 0 12px;
+  border-radius: 4px;
+  margin-bottom: $chip-margin;
+  margin-right: $chip-margin;
+
+  .exificon {
+    float: left;
+    font-size: 16px;
+    line-height: 32px;
+    padding-right: 8px;
+  }
+}
+
+
 @import 'photocoverage.scss';

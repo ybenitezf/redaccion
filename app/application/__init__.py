@@ -70,6 +70,7 @@ def create_app(config='config.Config'):
         from application.views.default import default
         from application.views.users import users_bp
         from application.searchcommands import cmd as search_cmd
+        from application.admin_commands import users_cmds
         from application.views.admin import MyAdminIndexView, UserView
         from application.views.admin import RoleView, PermissionView
 
@@ -78,6 +79,7 @@ def create_app(config='config.Config'):
         app.register_blueprint(default)
         app.register_blueprint(users_bp)
         app.register_blueprint(search_cmd)
+        app.register_blueprint(users_cmds)
         login_mgr.login_view = 'users.login'
 
         # admon views 
@@ -105,10 +107,12 @@ def create_app(config='config.Config'):
         @register_breadcrumb(app, '.', "Inicio")
         @register_menu(app, '.', "Inicio")
         def home():
+            """Registrar una raiz commun para los breadcrumbs"""
             return redirect(url_for('default.index'))
 
         @app.before_first_request
         def setupMenus():
+            """Crear las entradas virtuales del menu"""
             m = menu.root()
 
             # navbar para el menu principal de la app

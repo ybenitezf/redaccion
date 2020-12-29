@@ -13,9 +13,11 @@
     <div class="col s4">
         <img src="{{ url_for('.photo_thumbnail', id=foto.md5) }}" alt="" class="responsive-img">
         <!-- toolbar -->
-        <a class="waves-effect waves-light btn disabled"><i class="material-icons">content_copy</i></a>
-        <a class="waves-effect waves-light btn disabled"><i class="material-icons">file_download</i></a>
-        <a class="waves-effect waves-light btn disabled"><i class="material-icons">edit</i></a>
+        <div class="mt-3">
+            <a class="waves-effect waves-light btn disabled"><i class="material-icons">content_copy</i></a>
+            <a class="waves-effect waves-light btn disabled"><i class="material-icons">file_download</i></a>
+            <a class="waves-effect waves-light btn disabled"><i class="material-icons">edit</i></a>
+        </div>
     </div>
     <div class="col s8">
         <div class="photocoverage-excerpt">
@@ -35,12 +37,12 @@
             </div>
             <div class="col s6">
                 <!-- opcionales -->
-                {% if foto.camera %}<p><i class="material-icons left">camera_alt</i> {{foto.camera}}</p>{% endif %}
-                {% if foto.fnumber %}<p><i class="material-icons left">camera</i> f/{{foto.fnumber}}</p>{% endif %}
-                {% if foto.exposuretime %}<p><i class="material-icons left">av_timer</i> {{foto.exposuretime}}s</p>{% endif %}
-                {% if foto.focal %}<p><i class="material-icons left">lens</i> {{foto.focal}}mm</p>{% endif %}
-                {% if foto.isovalue %}<p><i class="material-icons left">iso</i> {{foto.isovalue}}</p>{% endif %}
-                {% if foto.software %}<p><i class="material-icons left">brush</i> {{foto.software}}</p>{% endif %}
+                {% if foto.camera %}<div class="exiftag"><i class="exificon material-icons">camera_alt</i> {{foto.camera}}</div>{% endif %}
+                {% if foto.fnumber %}<div class="exiftag"><i class="exificon material-icons">camera</i> f/{{foto.fnumber}}</div>{% endif %}
+                {% if foto.exposuretime %}<div class="exiftag"><i class="exificon material-icons">av_timer</i> {{foto.exposuretime}}s</div>{% endif %}
+                {% if foto.focal %}<div class="exiftag"><i class="exificon material-icons">lens</i> {{foto.focal}}mm</div>{% endif %}
+                {% if foto.isovalue %}<div class="exiftag"><i class="exificon material-icons">iso</i> {{foto.isovalue}}</div>{% endif %}
+                {% if foto.software %}<div class="exiftag"><i class="exificon material-icons">brush</i> {{foto.software}}</div>{% endif %}
                 <!-- en opcionales -->
             </div>
         </div>

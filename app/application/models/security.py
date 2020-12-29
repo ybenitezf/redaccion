@@ -3,7 +3,6 @@ from application.models import _gen_uuid
 from flask_login import UserMixin, current_user
 from flask_admin import expose
 from flask_principal import identity_loaded, RoleNeed, UserNeed
-from flask import request, redirect, url_for, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
