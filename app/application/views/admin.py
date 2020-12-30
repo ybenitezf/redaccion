@@ -1,6 +1,6 @@
 from application.forms import NewUserForm
 from application.models.security import User, Permission, Role
-from application import principal
+from application.permissions import admin_rol
 from application import db
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import AdminIndexView, expose
@@ -10,14 +10,11 @@ from flask_login import current_user, login_required
 from flask import url_for, redirect, request
 
 
-admin_permission = PrincipalPermission(RoleNeed('admin'))
-
-
 class MyAdminIndexView(AdminIndexView):
     
     @expose('/')
     @login_required
-    @admin_permission.require(http_exception=403)
+    @admin_rol.require(http_exception=403)
     def index(self):
         if current_user.is_authenticated is False:
             return redirect(
@@ -29,7 +26,7 @@ class MyAdminIndexView(AdminIndexView):
 class MySecureModelView(ModelView):
 
     def is_accessible(self):
-        return current_user.is_authenticated and admin_permission.can()
+        return current_user.is_authenticated and admin_rol.can()
 
 
 class UserView(MySecureModelView):

@@ -16,7 +16,9 @@
         <div class="mt-3">
             <a class="waves-effect waves-light btn disabled"><i class="material-icons">content_copy</i></a>
             <a class="waves-effect waves-light btn disabled"><i class="material-icons">file_download</i></a>
-            <a class="waves-effect waves-light btn disabled"><i class="material-icons">edit</i></a>
+            {% if can_edit %}
+            <a class="waves-effect waves-light btn"><i class="material-icons">edit</i></a>
+            {% endif %}
         </div>
     </div>
     <div class="col s8">

@@ -46,9 +46,20 @@ def load_user(id):
     return User.query.get(id)
 
 
+def logout_menu_item(*args, **kwargs):
+    return [
+        {
+            'text': "<i class='material-icons right'>logout</i>{}".format(
+                current_user.username),
+            'url': url_for('users.logout')
+        }
+    ]
+
+
 @users_bp.route("/logout")
 @register_menu(
-    users_bp, "navbar.users.logout", '<i class="material-icons">logout</i>',
+    users_bp, "navbar.users.logout", '',
+    dynamic_list_constructor=logout_menu_item,
     visible_when=lambda : current_user.is_authenticated)
 @register_menu(
     users_bp, "actions.users.lougout", "Salir",

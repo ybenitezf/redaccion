@@ -2,7 +2,7 @@ from application import db, cache
 from application.models import _gen_uuid
 from flask_login import UserMixin, current_user
 from flask_admin import expose
-from flask_principal import identity_loaded, RoleNeed, UserNeed
+from flask_principal import Need, identity_loaded, RoleNeed, UserNeed, ItemNeed
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -75,3 +75,13 @@ def on_identity_loaded(sender, identity):
         # Load the user roles to
         for rol in current_user.roles:
             identity.provides.add(RoleNeed(rol.name))
+            # load the user's concrete permissions
+            for p in rol.permissions:
+                if p.record_id:
+                    # permiso concreto sobre un objeto en particular
+                    identity.provides.add(
+                        ItemNeed(p.name, p.record_id, p.model_name))
+                else:
+                    # permiso sobre objetos del mismo tipo
+                    identity.provides.add(Need(p.name, p.model_name))
+            # -- 

@@ -1,8 +1,10 @@
-from application.photostore.forms import SearchPhotosForm
-from application.modules.editorjs import renderBlock
-from application.photostore.models import Photo, PhotoCoverage
-from application.photostore.utiles import StorageController
 from application import filetools, db
+from application.modules.editorjs import renderBlock
+from application.permissions import admin_rol
+from .forms import SearchPhotosForm
+from .models import Photo, PhotoCoverage
+from .utiles import StorageController
+from .permissions import rol_fotografia, EditPhotoPermission
 from whoosh.filedb.filestore import FileStorage
 from whoosh.qparser import MultifieldParser
 from flask_login import login_required, current_user
@@ -44,7 +46,9 @@ def photo_thumbnail(id):
 @register_breadcrumb(photostore, '.index.id', 'Detalles')
 def photo_details(id):
     p = Photo.query.get_or_404(id)
-    return render_template('photostore/photo_details.html', foto=p)
+    can_edit = (EditPhotoPermission(p.md5).can() or admin_rol.can())
+    return render_template(
+        'photostore/photo_details.html', foto=p, can_edit=can_edit)
 
 
 @photostore.route('/')
@@ -60,6 +64,22 @@ def index():
 
     return render_template(
         'photostore/index.html', coberturas=coberturas, form=form)
+
+
+@photostore.route('/myphotos')
+@register_breadcrumb(photostore, '.index.mis_fotos', 'Mis fotos')
+@register_menu(photostore, 'actions.photostore.mis_fotos', 'Mis fotos')
+@login_required
+def mis_fotos():
+    """Las fotos de este usuario"""
+    page = request.args.get('page', 1, type=int)
+    form = SearchPhotosForm()
+    photos = Photo.query.filter_by(
+        upload_by=current_user.id
+    ).order_by(
+        Photo.archive_on.desc()).paginate(page, per_page=12)
+    return render_template(
+        'photostore/mis_fotos.html', fotos=photos, search_form=form)
 
 
 @photostore.route('/search', methods=['GET', 'POST'])

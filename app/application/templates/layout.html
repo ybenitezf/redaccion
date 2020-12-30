@@ -53,9 +53,11 @@
                 <!-- <h5 class="right-left mt-5">{{ section.text }}</h5> -->
                 <div class="collection">
                   {% for item in section.children %}
+                  {% if item.visible: %}
                   <a href="{{ item.url }}" class="collection-item {{ 'active' if item.url == request.path else '' }}">
                     {{ item.text|safe }}
                   </a>
+                  {% endif %}
                   {% endfor %}
                 </div>
                 {% endif %}
