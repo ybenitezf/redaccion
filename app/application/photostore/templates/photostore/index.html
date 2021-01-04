@@ -7,7 +7,6 @@
     <form action="{{ url_for('.buscar_indice') }}" method="POST" class="col s12 px-5">
         {{ form.csrf_token }}
         <div class="col s11 input-field">
-            <i class="material-icons prefix">search</i>
             <input id="userq_field" type="search" class="validate" name="userquery" required>
             <label class="active" for="userq_field">Buscar</label>
         </div>
@@ -29,15 +28,9 @@
               <!-- titulo -->
               <span class="card-title photocoverage-headline blue-grey-text text-darken-2">{{ item.headline }}</span>
               <!-- fotos -->
-              <div class="photocoverage-photos">
-                <div class="photos-container">
-                    {% for photo in item.photos %}
-                    <div>
-                        <a href="{{ url_for('.photo_details', id=photo.md5) }}"><img src="{{ url_for('.photo_thumbnail', id=photo.md5) }}" alt=""></a>
-                    </div>
-                    {% endfor %}
-                </div>
-              </div>
+              {% with lista_fotos = item.photos %}
+                {% include "photostore/_foto_gallery.html" %}
+              {% endwith %}
               <!-- // end fotos -->
               <!-- descripcion -->
               <div class="photocoverage-excerpt">
@@ -57,9 +50,6 @@
               <div class="photocoverage-archivedon">
                   <i class="material-icons left">event</i> {{ item.archive_on.isoformat() }}
               </div>
-            </div>
-            <div class="card-action">
-              <a href="#!">Detalles</a>
             </div>
         </div>
         {% endfor %}

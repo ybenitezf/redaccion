@@ -12,7 +12,7 @@ import RawTool from '@editorjs/raw';
 
 const axios = require('axios').default;
 
-export default class extends Controller {
+export default class EditorController extends Controller {
 
   static targets = ["content", "headline", "creditline", "tags"]
 

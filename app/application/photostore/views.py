@@ -107,7 +107,9 @@ def buscar_indice():
         results = s.search(qp.parse(userquery), groupedby="keywords")
         keywords_grp = results.groups("keywords")
         try:
-            photos = [Photo.query.get(r.get('md5')) for r in results]
+            from_search = [Photo.query.get(r.get('md5')) for r in results]
+            # clean up Nones, pueden venir de la busqueda
+            photos = [p for p in from_search if p]
         except Exception as e:
             current_app.logger.exception("Hay un problema aqui")
 

@@ -55,7 +55,7 @@ const restricciones = {
     }
 }
 
-export default class extends Controller {
+export default class  CoverageUploadController extends Controller {
 
     static targets = [
         "resumen", "tags", "headline", "creditline", "photos", "takenby"

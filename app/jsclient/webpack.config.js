@@ -3,8 +3,8 @@ const path = require( 'path' );
 module.exports = {
     context: __dirname,
     entry: {
-      editorcomp: './src/editor.js',
-      photostore: './src/photostore/index.js'
+      editorcomp: './src/editorpage.js',
+      photoupload: './src/photostoreupload.js'
     },
     output: {
         path: path.resolve( __dirname, '../application/static/js' ),
