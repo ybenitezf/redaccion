@@ -4,7 +4,8 @@ module.exports = {
     context: __dirname,
     entry: {
       editorcomp: './src/editorpage.js',
-      photoupload: './src/photostoreupload.js'
+      photoupload: './src/photostoreupload.js',
+      editcobertura: './src/editcoberturapage.js'
     },
     output: {
         path: path.resolve( __dirname, '../application/static/js' ),

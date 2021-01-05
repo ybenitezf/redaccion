@@ -11,7 +11,7 @@ from flask_login import login_required, current_user
 from flask_breadcrumbs import register_breadcrumb, default_breadcrumb_root
 from flask_menu import register_menu, current_menu
 from flask import Blueprint, current_app, render_template, abort
-from flask import request, json, send_file
+from flask import request, json, send_file, request, url_for
 from pathlib import Path
 from werkzeug.utils import secure_filename
 import os
@@ -62,8 +62,42 @@ def index():
     coberturas = PhotoCoverage.query.order_by(
         PhotoCoverage.archive_on.desc()).paginate(page, per_page=4)
 
+    def can_edit(photo: PhotoCoverage):
+        return (photo.author_id == current_user.id) or admin_rol.can()
+    
     return render_template(
-        'photostore/index.html', coberturas=coberturas, form=form)
+        'photostore/index.html', coberturas=coberturas, 
+        form=form, can_edit=can_edit)
+
+
+def view_editarCobertura_dlc(*args, **kwargs):
+    id = request.view_args['id']
+    cob = PhotoCoverage.query.get_or_404(id)
+    return [
+        {
+            'text': 'Editar Cobertura', 
+            'url': url_for('.editarCobertura', id=cob.id)
+        }
+    ]
+
+
+@photostore.route('/editar/cobertura/<id>')
+@register_breadcrumb(
+    photostore, '.index.editarCobertura', '', 
+    dynamic_list_constructor=view_editarCobertura_dlc)
+@login_required
+def editarCobertura(id):
+    cobertura = PhotoCoverage.query.get_or_404(id)
+    # para los chips de los keywords
+    chips = [
+        {'tag': k} for k in cobertura.keywords
+    ]
+    # --
+    return render_template(
+        'photostore/editar_cobertura.html',
+        cobertura=cobertura,
+        chips=chips)
+
 
 
 @photostore.route('/myphotos')
@@ -130,7 +164,7 @@ def upload_coverture():
 @photostore.route('/upload', methods=['POST'])
 @login_required
 def handle_upload():
-    """Handle uploads from uppy.js"""
+    """Handle uploads of photos"""
     if 'image' not in request.files:
         current_app.logger.debug("not file send")
         abort(400)
@@ -145,21 +179,37 @@ def handle_upload():
         file.save(fullname)
         # Procesar la imagen aqui
         # -- 
-        keywords = json.loads(request.form.get('keywords'))
-        user_data = {
-            'headline': request.form.get('headline'),
-            'creditline': request.form.get('creditline'),
-            'keywords': list(filter(None, keywords)),
-            'excerpt': request.form.get('excerpt'),
-            'uploader': current_user.id,
-            'taken_by': request.form.get('takenby')
-        }
+        coverage = PhotoCoverage.query.get_or_404(
+            request.form.get('photo_coverage'))
+        if coverage:
+            keywords = coverage.keywords
+            user_data = {
+                'headline': coverage.headline,
+                'creditline': coverage.credit_line,
+                'keywords': coverage.keywords,
+                'excerpt': coverage.excerpt,
+                'uploader': current_user.id,
+                'taken_by': current_user.name
+            }
+        else:
+            keywords = json.loads(request.form.get('keywords'))
+            user_data = {
+                'headline': request.form.get('headline'),
+                'creditline': request.form.get('creditline'),
+                'keywords': list(filter(None, keywords)),
+                'excerpt': request.form.get('excerpt'),
+                'uploader': current_user.id,
+                'taken_by': request.form.get('takenby')
+            }
         im = StorageController.getInstance().processPhoto(
             fullname, user_data
         )
         if im:
             # retornar la información de la imagen procesada, sobre
             # todo el md5 o id de la imagen
+            if coverage:
+                coverage.photos.append(im)
+                db.session.add(coverage)
             db.session.add(im)
             db.session.commit()
             return {'md5': im.md5}
