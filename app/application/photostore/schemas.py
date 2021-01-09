@@ -1,4 +1,4 @@
-from application.photostore.models import PhotoCoverage
+from application.photostore.models import PhotoCoverage, Photo
 from application.modules.editorjs import renderBlock
 from application import ma
 from marshmallow import fields, post_dump
@@ -14,7 +14,8 @@ class PhotoCoverageSchema(ma.SQLAlchemySchema):
     excerpt = ma.auto_field()
     credit_line = ma.auto_field()
     keywords = fields.List(fields.Str())
-    photos = fields.List(fields.Str())
+    # photos = fields.List(fields.Str())
+    photos = ma.auto_field()
 
 
 class PhotoIndexSchema(ma.Schema):

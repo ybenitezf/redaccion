@@ -179,40 +179,23 @@ def handle_upload():
         file.save(fullname)
         # Procesar la imagen aqui
         # -- 
-        coverage = PhotoCoverage.query.get_or_404(
-            request.form.get('photo_coverage'))
-        if coverage:
-            keywords = coverage.keywords
-            user_data = {
-                'headline': coverage.headline,
-                'creditline': coverage.credit_line,
-                'keywords': coverage.keywords,
-                'excerpt': coverage.excerpt,
-                'uploader': current_user.id,
-                'taken_by': current_user.name
-            }
-        else:
-            keywords = json.loads(request.form.get('keywords'))
-            user_data = {
-                'headline': request.form.get('headline'),
-                'creditline': request.form.get('creditline'),
-                'keywords': list(filter(None, keywords)),
-                'excerpt': request.form.get('excerpt'),
-                'uploader': current_user.id,
-                'taken_by': request.form.get('takenby')
-            }
+        keywords = json.loads(request.form.get('keywords'))
+        user_data = {
+            'headline': request.form.get('headline'),
+            'creditline': request.form.get('creditline'),
+            'keywords': list(filter(None, keywords)),
+            'excerpt': request.form.get('excerpt'),
+            'uploader': current_user.id,
+            'taken_by': request.form.get('takenby')
+        }
         im = StorageController.getInstance().processPhoto(
-            fullname, user_data
-        )
+            fullname, user_data)
         if im:
             # retornar la información de la imagen procesada, sobre
             # todo el md5 o id de la imagen
-            if coverage:
-                coverage.photos.append(im)
-                db.session.add(coverage)
             db.session.add(im)
             db.session.commit()
-            return {'md5': im.md5}
+            return {'md5': im.md5}, 200
         else:
             return {"message": "Invalid image"}, 400
     
