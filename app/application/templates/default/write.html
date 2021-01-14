@@ -4,11 +4,11 @@
 
 {% block content %}
 <div data-controller="editor"
-    data-editor-author="{{ current_user.name }}"
-    data-editor-apiendpoint="{{ url_for('default.articleEndPoint', pkid=pkid) }}"
-    data-editor-imageUpload="{{ url_for('default.upload_image') }}"
-    data-editor-imageFetchURL="{{ url_for('default.fetch_image') }}"
-    data-editor-linkEndPoint="{{ url_for('default.fetch_link') }}">
+    data-editor-author-value="{{ current_user.name }}"
+    data-editor-apiendpoint-value="{{ url_for('default.articleEndPoint', pkid=pkid) }}"
+    data-editor-imageupload-value="{{ url_for('default.upload_image', _external=True) }}"
+    data-editor-imagefetchurl-value="{{ url_for('default.fetch_image', _external=True) }}"
+    data-editor-linkendpoint-value="{{ url_for('default.fetch_link', _external=True) }}">
 
     <div class="container">
       <div class="row">
@@ -34,7 +34,7 @@
     <div id="editorContent" data-editor-target="content" class="browser-default-uls flow-text mt-5">
     </div>
 
-    <div class="fixed-action-btn editor-tool-box">
+    <div class="fixed-action-btn editor-tool-box" data-editor-target="toolbox">
       <a class="btn-floating btn-large disabled" data-action="editor#guardar" title="Guardar">
         <i class="large material-icons">save</i>
       </a>

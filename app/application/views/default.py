@@ -1,3 +1,4 @@
+from application.modules.editorjs import renderBlock
 from application.modules.imagetools import handleImageUpload, handleURL
 from application.models.content import Article
 from application.models import _gen_uuid
@@ -12,6 +13,7 @@ from urllib.parse import urlparse
 from webpreview import OpenGraph
 import tempfile
 import os
+import re
 
 
 default = Blueprint('default', __name__, url_prefix='/escritorio')
@@ -123,6 +125,39 @@ def fetch_image():
         return {"success": 0}
 
     url = request.json['url']
+
+    if current_app.config.get('PHOTOSTORE_ENABLED'):
+        # test if the url comes from photostore
+        from application.photostore.models import Photo
+        from application.photostore.schemas import PhotoToEditorJSSchema
+
+        regex = r"https?:\/\/\S+\/(\w+)\/.(gif|jpe?g|tiff|png)$"
+        maches = re.search(regex, url, re.IGNORECASE)
+        if maches:
+            # test if i got this photo id
+            md5sum = maches.group(1)
+            p = Photo.query.get(md5sum)
+            if p is not None:
+                # ok, this is an internal image
+                photo_data = PhotoToEditorJSSchema().dump(p)
+                return {
+                    "success": 1,
+                    "file": {
+                        "url": url_for(
+                            'photos.photo_getimage', id=p.md5),
+                        "md5sum": p.md5,
+                        "photostore": photo_data
+                    },
+                    "credit": p.credit_line,
+                    "caption": render_template(
+                        'photostore/editorjs/photo_excerpt.html',
+                        data=photo_data.get('excerpt'),
+                        block_renderer=renderBlock
+                    )
+                }
+        # --
+
+    # try to get the remote image, not internal
     # extract the hostname from url
     if urlparse(url).netloc:
         credit = "Tomada de {}".format(urlparse(url).netloc)

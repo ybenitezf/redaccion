@@ -14,14 +14,22 @@ const axios = require('axios').default;
 
 export default class EditorController extends Controller {
 
-  static targets = ["content", "headline", "creditline", "tags"]
+  static targets = [
+    "content", "headline", "creditline", "tags", "toolbox"]
+  static values = {
+    author: String,
+    apiendpoint: String,
+    imageupload: String,
+    imagefetchurl: String,
+    linkendpoint: String
+  }
 
   initialize() {
     this.loadEditorJS.bind(this)
   }
 
   connect() {
-    const apiUrl = this.data.get("apiendpoint");
+    const apiUrl = this.apiendpointValue;
     M.Chips.init(this.tagsTarget, {
       placeholder: "Plabras clave"
     });
@@ -40,8 +48,8 @@ export default class EditorController extends Controller {
   }
 
   loadEditorJS(data) {
-    $('.editor-tool-box').floatingActionButton();
-
+    M.FloatingActionButton.init(this.toolboxTarget, {});
+    
     this.headlineTarget.value = data.headline;
     this.creditlineTarget.value = data.creditline;
     var tags = M.Chips.getInstance(this.tagsTarget);
@@ -74,15 +82,14 @@ export default class EditorController extends Controller {
         },
         image: {
           class: ImageTool,
-          types: "image/png,image/jpg",
-          buttonContent: "Seleccionar una imágen",
           inlineToolbar: true,
           config: {
+            buttonContent: "Seleccionar una imágen",
             captionPlaceholder: "Pie de foto",
             creditPlaceholder: "Creditos",
             endpoints: {
-              byFile: this.data.get("imageupload"),
-              byUrl: this.data.get("imagefetchurl"),
+              byFile: this.imageuploadValue,
+              byUrl: this.imagefetchurlValue,
             }
           }
         },
@@ -99,7 +106,7 @@ export default class EditorController extends Controller {
         linkTool: {
           class: LinkTool,
           config: {
-            endpoint: this.data.get("linkendpoint")
+            endpoint: this.linkendpointValue
           }
         },
         warning: {
@@ -109,7 +116,7 @@ export default class EditorController extends Controller {
           config: {
             titlePlaceholder: 'Title',
             messagePlaceholder: 'Message',
-            author: this.data.get("author")
+            author: this.authorValue
           },
         },
         rawCode: {
@@ -121,8 +128,8 @@ export default class EditorController extends Controller {
       },
       i18n: {},
       placeholder: 'Da clic aquí para comenzar a escribir',
-      data: data.content,
-
+      data: data.content ? data.content : {},
+      logLevel: 'VERBOSE',
       onReady: () => {
         this.enableGuardar()
       }
@@ -141,7 +148,7 @@ export default class EditorController extends Controller {
 
   guardar(event) {
     // desactivar el boton un momento
-    const apiUrl = this.data.get("apiendpoint");
+    const apiUrl = this.apiendpointValue;
     this.disableGuardar();
     var keywords = [];
     M.Chips.getInstance(this.tagsTarget).chipsData.forEach((tagData) => {

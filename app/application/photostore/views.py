@@ -42,6 +42,18 @@ def photo_thumbnail(id):
     return send_file(p.thumbnail)
 
 
+@photostore.route('/photo/getimage/<id>')
+def photo_getimage(id):
+    p = Photo.query.get_or_404(id)
+    return send_file(p.fspath)
+
+
+@photostore.route('/photo/fakelink/<id>/.<ext>')
+def fakelink(id, ext):
+    p = Photo.query.get_or_404(id)
+    return send_file(p.thumbnail)
+
+
 @photostore.route('/photo/details/<id>')
 @register_breadcrumb(photostore, '.index.id', 'Detalles')
 def photo_details(id):
@@ -207,8 +219,8 @@ def render_excerpt_to_html():
     def render_excerpt(in_data):
         data = json.loads(in_data)
         return render_template(
-            'photostore/editorjs/photo_except.html', 
+            'photostore/editorjs/photo_excerpt.html', 
             data=data,
-            block_rederer=renderBlock)
+            block_renderer=renderBlock)
 
     return dict(render_excerpt=render_excerpt)

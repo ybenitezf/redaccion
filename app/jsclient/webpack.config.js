@@ -5,7 +5,8 @@ module.exports = {
     entry: {
       editorcomp: './src/editorpage.js',
       photoupload: './src/photostoreupload.js',
-      editcobertura: './src/editcoberturapage.js'
+      editcobertura: './src/editcoberturapage.js',
+      coberturaspage: './src/coberturaspage.js'
     },
     output: {
         path: path.resolve( __dirname, '../application/static/js' ),

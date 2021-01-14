@@ -281,6 +281,11 @@ class Photo(db.Model):
     exposuretime = db.Column(db.String(10))
 
     @hybrid_property
+    def extension(self):
+        """Return the file extension"""
+        return Path(self.fspath).suffix[1:]
+
+    @hybrid_property
     def keywords(self):
         if self._kws is not None:
             return self._kws.split('|')

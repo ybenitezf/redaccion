@@ -3,9 +3,10 @@ FROM python:3.8
 WORKDIR /src
 
 COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt && \
+RUN pip install -U --no-cache-dir pip && \
+    pip install --no-cache-dir -r requirements.txt && \
     pip install --no-cache-dir pytest pytest-cov && \
-    pip install gunicorn
+    pip install --no-cache-dir gunicorn
 COPY . /src
 
 CMD gunicorn "application:create_app('config.Config')" \
