@@ -1,5 +1,6 @@
 from application.modules.editorjs import renderBlock
 from application.modules.imagetools import handleImageUpload, handleURL
+from application.modules.imagetools import handleFromPhotoStore
 from application.models.content import Article
 from application.models import _gen_uuid
 from application import filetools, db
@@ -69,6 +70,45 @@ def uploaded_image(filename):
     return send_from_directory(folder, filename)
 
 
+def processInternalPhoto(p, photo_data):
+    # ok, this is an internal image
+    _l = current_app.logger.debug
+
+    _l("ok, this is an internal image")
+    try:
+        im = handleFromPhotoStore(
+            p.md5, p.fspath, 
+            current_app.config['UPLOAD_FOLDER'])
+        if not im.upload_by:
+            im.upload_by = p.upload_by
+        if not im.store_data:
+            im.store_data = json.dumps(photo_data)
+        db.session.add(im)
+        db.session.commit()
+    except Exception:
+        current_app.logger.exception(
+            "Error proccessing {}".format(p.md5))
+        return {"success": 0}
+
+    return {
+        "success": 1,
+        "file": {
+            "url": url_for(
+                'default.uploaded_image', 
+                filename=im.filename, 
+                _external=True),
+            "md5sum": p.md5,
+            "photostore": photo_data
+        },
+        "credit": p.credit_line,
+        "caption": render_template(
+            'photostore/editorjs/photo_excerpt.html',
+            data=photo_data.get('excerpt'),
+            block_renderer=renderBlock
+        )
+    }
+
+
 @default.route('/upload-image', methods=['POST'])
 @login_required
 def upload_image():
@@ -91,15 +131,26 @@ def upload_image():
         filename = secure_filename(file.filename)
         fullname = os.path.join(tempfile.mkdtemp(), filename)
         file.save(fullname)
+        md5sum = filetools.md5(fullname)
+        if current_app.config.get('PHOTOSTORE_ENABLED'):
+            from application.photostore.models import Photo
+            from application.photostore.schemas import PhotoToEditorJSSchema
+
+            p = Photo.query.get(md5sum)
+            if p is not None:
+                # this is a photostore image
+                filetools.safe_remove(fullname)
+                return processInternalPhoto(
+                    p, PhotoToEditorJSSchema().dump(p))
+                # ---
+        
         im = handleImageUpload(
-            fullname, current_user.id, current_app.config['UPLOAD_FOLDER'])
+            md5sum, fullname, current_user.id, 
+            current_app.config['UPLOAD_FOLDER'])
         db.session.add(im)
         db.session.commit()
         # remove temporary file
-        try:
-            os.remove(fullname)
-        except OSError:
-            pass
+        filetools.safe_remove(fullname)
 
         return {
             "success": 1,
@@ -125,6 +176,8 @@ def fetch_image():
         return {"success": 0}
 
     url = request.json['url']
+    _l = current_app.logger.debug
+    _l("Handling: {}".format(url))
 
     if current_app.config.get('PHOTOSTORE_ENABLED'):
         # test if the url comes from photostore
@@ -139,22 +192,8 @@ def fetch_image():
             p = Photo.query.get(md5sum)
             if p is not None:
                 # ok, this is an internal image
-                photo_data = PhotoToEditorJSSchema().dump(p)
-                return {
-                    "success": 1,
-                    "file": {
-                        "url": url_for(
-                            'photos.photo_getimage', id=p.md5),
-                        "md5sum": p.md5,
-                        "photostore": photo_data
-                    },
-                    "credit": p.credit_line,
-                    "caption": render_template(
-                        'photostore/editorjs/photo_excerpt.html',
-                        data=photo_data.get('excerpt'),
-                        block_renderer=renderBlock
-                    )
-                }
+                return processInternalPhoto(
+                    p, PhotoToEditorJSSchema().dump(p))
         # --
 
     # try to get the remote image, not internal

@@ -1,5 +1,6 @@
 """Content related models"""
 from sqlalchemy.ext.hybrid import hybrid_property, Comparator
+from whoosh.qparser import default
 from application import db
 from application.models import _gen_uuid
 from datetime import datetime
@@ -70,3 +71,4 @@ class ImageModel(db.Model):
     upload_by = db.Column(
         db.String(32), db.ForeignKey('user.id'), nullable=True)
     uploader = db.relationship('User', lazy=True)
+    store_data = db.Column(db.Text(), default='')
