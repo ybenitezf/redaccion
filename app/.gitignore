@@ -154,6 +154,9 @@ application/static/js/editorcomp.js
 application/static/js/photoupload.js
 application/static/js/editcobertura.js
 application/static/js/coberturaspage.js
+application/static/js/myphotospage.js
+application/static/js/photosearch_page.js
+application/static/js/photodetails_page.js
 application/static/js/init.js
 application/static/css/utils.css
 application/static/css/style.css

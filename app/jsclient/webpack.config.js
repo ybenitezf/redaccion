@@ -6,7 +6,10 @@ module.exports = {
       editorcomp: './src/editorpage.js',
       photoupload: './src/photostoreupload.js',
       editcobertura: './src/editcoberturapage.js',
-      coberturaspage: './src/coberturaspage.js'
+      coberturaspage: './src/coberturaspage.js',
+      myphotospage: './src/myphotospage.js',
+      photosearch_page: './src/photosearch_page.js',
+      photodetails_page: './src/photodetails_page.js',
     },
     output: {
         path: path.resolve( __dirname, '../application/static/js' ),
