@@ -85,7 +85,7 @@ services:
         build: ./nginx
         restart: always
         environment: 
-            AUTH_ENDPOINT: app.local
+           APP_ENDPOINT: app.local
         ports: 
             - 8080:8080
         depends_on: 
