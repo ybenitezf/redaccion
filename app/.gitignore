@@ -157,6 +157,7 @@ application/static/js/coberturaspage.js
 application/static/js/myphotospage.js
 application/static/js/photosearch_page.js
 application/static/js/photodetails_page.js
+application/static/js/photoedit_page.js
 application/static/js/init.js
 application/static/css/utils.css
 application/static/css/style.css

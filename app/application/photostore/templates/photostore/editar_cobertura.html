@@ -64,14 +64,20 @@
                     class="validate" value="{{ cobertura.credit_line }}" required>
                 <label for="creditline_field">Creditos</label>
             </div>
-            <div class="input-field" data-controller="chips" data-chips-tags-value='{{ chips|tojson|safe }}'>
-                <div class="chips chips-initial" data-chips-target="vista" data-cobertura-target="tags"></div>
+            <div class="input-field" data-controller="chips" data-cobertura-target="tags"
+                data-chips-placeholder-value="Palabras clave"
+                data-chips-secondary-value="+Palabra">
+                <input type="hidden" name="tags" id="f_tags" value='{{ cobertura.keywords|tojson|safe }}' data-chips-target="input">
+                <label class="active" for="f_tags">Palabras clave</label>
+                <div class="chips chips-initial" data-chips-target="view"></div>
                 <span class="helper-text">
                     Ingrese la palabra clave y presione <code class="grey darken-3 white-text p-1">ENTER</code>
                 </span>
             </div>
             <div class="input-field px-3 mt-5 mb-5" data-controller="editor"
-                data-editor-entrada-value='{{ cobertura.excerpt | safe }}' data-cobertura-target="excerpt">
+                data-editor-placeholder-value="Escribe aquí una descripción de la cobertura"
+                data-cobertura-target="excerpt">
+                <input data-editor-target="input" type="hidden" name="excerpt_data" value='{{ cobertura.excerpt | safe }}'>
                 <div id="excerpt_field" data-editor-target="editor"></div>
             </div>
             <div class="row">

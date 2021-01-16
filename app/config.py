@@ -23,15 +23,15 @@ class Config(object):
     INDEX_BASE_DIR = os.getenv('INDEX_BASE_DIR') or '/tmp/myindexes'
     
     # ldap integration
-    LDAP_AUTH = False
-    LDAP_HOST = '192.168.2.2'
-    LDAP_BASE_DN = 'DC=adelante,DC=lan'
-    LDAP_USER_DN = 'CN=Users'
-    LDAP_GROUP_DN = 'CN=Groups'
-    LDAP_USER_RDN_ATTR = 'CN'
-    LDAP_USER_LOGIN_ATTR = 'samAccountname'
-    LDAP_BIND_USER_DN = 'CN=Read Only,CN=Users,DC=adelante,DC=lan'
-    LDAP_BIND_USER_PASSWORD = 'zp3N7qvu'
+    LDAP_AUTH = (os.getenv('LDAP_AUTH', 'False') == 'True')
+    LDAP_HOST = os.getenv('LDAP_HOST', '')
+    LDAP_BASE_DN = os.getenv('LDAP_BASE_DN', '')
+    LDAP_USER_DN = os.getenv('LDAP_USER_DN', '')
+    LDAP_GROUP_DN = os.getenv('LDAP_GROUP_DN', '')
+    LDAP_USER_RDN_ATTR = os.getenv('LDAP_USER_RDN_ATTR', '')
+    LDAP_USER_LOGIN_ATTR = os.getenv('LDAP_USER_LOGIN_ATTR', '')
+    LDAP_BIND_USER_DN = os.getenv('LDAP_BIND_USER_DN', '')
+    LDAP_BIND_USER_PASSWORD = os.getenv('LDAP_BIND_USER_PASSWORD', '')
     # --
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 

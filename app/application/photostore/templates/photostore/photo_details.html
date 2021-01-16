@@ -22,7 +22,7 @@
             </a>
             <a class="waves-effect waves-light btn disabled"><i class="material-icons">file_download</i></a>
             {% if can_edit %}
-            <a class="waves-effect waves-light btn"><i class="material-icons">edit</i></a>
+            <a href="{{ url_for('.photo_edit', id=foto.md5) }}" class="waves-effect waves-light btn"><i class="material-icons">edit</i></a>
             {% endif %}
         </div>
     </div>

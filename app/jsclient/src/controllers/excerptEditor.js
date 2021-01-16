@@ -2,16 +2,18 @@ import { Controller } from "stimulus"
 import EditorJS from "@editorjs/editorjs";
 
 export default class EditorExcerptController extends Controller {
-    static values = { entrada: String }
-    static targets = ["editor"]
+    static values = { placeholder: String, minheight: Number }
+    static targets = ["editor", "input"]
 
     connect() {
-        var data = JSON.parse(this.entradaValue)
+        var data = JSON.parse(this.inputTarget.value)
+        const placeholder = this.hasPlaceholderValue ? this.placeholderValue: 'Escribe aqui'
+        const minHeight = this.hasMinheightValue ? this.minheightValue: 20
         this.editor = new EditorJS({
             holder: this.editorTarget.id,
-            minHeight: 20,
+            minHeight: minHeight,
             data: data,
-            placeholder: "Escribe aquí una descripción de la cobertura"
+            placeholder: placeholder
         })
     }
 
@@ -19,5 +21,13 @@ export default class EditorExcerptController extends Controller {
         if (this.editor) {
             this.editor.destroy()
         }
+    }
+
+    getData() {
+        return this.editor.save()
+    }
+
+    saveToInput(data) {
+        this.inputTarget.value = JSON.stringify(data)
     }
 }

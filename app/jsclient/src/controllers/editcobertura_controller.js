@@ -77,21 +77,17 @@ export default class EditCoberturaController extends Controller {
     guardar(event) {
         var btn = this.btnTarget
         btn.classList.add('disabled')
-        var tags = [];
-        M.Chips.getInstance(this.tagsTarget).chipsData.forEach((tagData) => {
-          tags.push(tagData.tag);
-        })
+        var tags = this.application.getControllerForElementAndIdentifier(
+            this.tagsTarget, "chips").getValuesAsList()
         const headline = this.headlineTarget.value
         const creditline = this.creditlineTarget.value
-        // const updatephotos = this.updatephotosTarget.checked
-        // const apiendpoint = this.apiendpointValue
         var apiendpoint = this.apiendpointValue + '?'
         apiendpoint += this.objectToQueryString(
             {updatephotos: this.updatephotosTarget.checked})
 
         this.application.getControllerForElementAndIdentifier(
             this.excerptTarget, "editor"
-        ).editor.save().then((data) => {
+        ).getData().then((data) => {
             if(this.isValid({
                 headline: headline,
                 creditline: creditline,

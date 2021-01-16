@@ -1,7 +1,7 @@
 from application import filetools, db
 from application.modules.editorjs import renderBlock
 from application.permissions import admin_rol
-from .forms import SearchPhotosForm
+from .forms import PhotoDetailsForm, SearchPhotosForm
 from .models import Photo, PhotoCoverage
 from .utiles import StorageController
 from .permissions import rol_fotografia, EditPhotoPermission
@@ -13,7 +13,7 @@ from flask_menu import register_menu, current_menu
 from flask import Blueprint, current_app, render_template, abort
 from flask import request, json, send_file, request, url_for
 from pathlib import Path
-from werkzeug.utils import secure_filename
+from werkzeug.utils import redirect, secure_filename
 import os
 import tempfile
 
@@ -63,6 +63,27 @@ def photo_details(id):
         'photostore/photo_details.html', foto=p, can_edit=can_edit)
 
 
+@photostore.route('/photo/edit/<id>', methods=['GET', 'POST'])
+@register_breadcrumb(photostore, '.index.id', 'Editar datos de la foto')
+def photo_edit(id):
+    p = Photo.query.get_or_404(id)
+    can_edit = (EditPhotoPermission(p.md5).can() or admin_rol.can())
+    if can_edit is False:
+        abort(403)
+
+    form = PhotoDetailsForm()
+    if form.validate_on_submit():
+        p.headline = form.headline.data
+        p.credit_line = form.credit_line.data
+        p.excerpt = form.excerpt.data
+        p.keywords = json.loads(form.tags.data)
+        db.session.add(p)
+        db.session.commit()
+        return redirect(url_for('.photo_details', id=p.md5))
+
+    return render_template(
+        'photostore/photo_edit.html', foto=p, form=form)
+
 @photostore.route('/')
 @register_breadcrumb(photostore, '.index', 'Fotos')
 @register_menu(photostore, 'navbar.photostore.index', 'Fotos')
@@ -100,15 +121,8 @@ def view_editarCobertura_dlc(*args, **kwargs):
 @login_required
 def editarCobertura(id):
     cobertura = PhotoCoverage.query.get_or_404(id)
-    # para los chips de los keywords
-    chips = [
-        {'tag': k} for k in cobertura.keywords
-    ]
-    # --
     return render_template(
-        'photostore/editar_cobertura.html',
-        cobertura=cobertura,
-        chips=chips)
+        'photostore/editar_cobertura.html', cobertura=cobertura)
 
 
 

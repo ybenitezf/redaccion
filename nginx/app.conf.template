@@ -1,5 +1,5 @@
 server {
-    listen 8080;
+    listen ${APP_PORT};
 
     server_name  ${APP_ENDPOINT};
 

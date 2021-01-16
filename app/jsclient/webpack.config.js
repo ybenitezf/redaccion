@@ -10,6 +10,7 @@ module.exports = {
       myphotospage: './src/myphotospage.js',
       photosearch_page: './src/photosearch_page.js',
       photodetails_page: './src/photodetails_page.js',
+      photoedit_page: './src/photoedit_page.js'
     },
     output: {
         path: path.resolve( __dirname, '../application/static/js' ),
