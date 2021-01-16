@@ -9,5 +9,8 @@ RUN pip install -U --no-cache-dir pip && \
     pip install --no-cache-dir gunicorn
 COPY . /src
 
+# remove env files
+RUN rm -rf .env; rm -rf .flaskenv
+
 CMD gunicorn "application:create_app('config.Config')" \
     --log-level=debug --reload -b 0.0.0.0:5000
