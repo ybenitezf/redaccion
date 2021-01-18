@@ -58,7 +58,8 @@ const restricciones = {
 export default class  CoverageUploadController extends Controller {
 
     static targets = [
-        "resumen", "tags", "headline", "creditline", "photos", "takenby"
+        "resumen", "tags", "headline", "creditline", "photos", "takenby",
+        "sendbtn"
     ]
 
     static values = {
@@ -68,13 +69,11 @@ export default class  CoverageUploadController extends Controller {
     }
 
     disableGuardar() {
-        var el = document.querySelector('*[data-action="click->newcov#save"]')
-        el.classList.add('disabled')
+        this.sendbtnTarget.classList.add('disabled')
     }
     
     enableGuardar() {
-        var el = document.querySelector('*[data-action="click->newcov#save"]')
-        el.classList.remove('disabled')
+        this.sendbtnTarget.classList.remove('disabled')
     }
 
     connect() {
@@ -101,8 +100,12 @@ export default class  CoverageUploadController extends Controller {
             height: 480
         }).use(XHRUpload, {
             fieldName: 'image',
-            endpoint: this.uploadendpointValue
+            endpoint: this.uploadendpointValue,
+            limit: 4,
+            timeout: 60 * 1000
         })
+
+        this.enableGuardar()
     }
 
     disconnect() {

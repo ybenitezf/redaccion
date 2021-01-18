@@ -5,7 +5,7 @@ from application.photostore.models import Photo, PhotoCoverage
 from apifairy import arguments, body, response, other_responses
 from flask_login import login_required, current_user
 from flask import Blueprint, abort, jsonify
-from flask import current_app as app
+from flask import current_app
 
 
 photostore_api = Blueprint(

@@ -2,7 +2,7 @@ import shutil
 from application import db
 from application.models import _gen_uuid
 from sqlalchemy.ext.hybrid import hybrid_property, Comparator
-from flask import current_app as app
+from flask import current_app
 from PIL import Image
 from iptcinfo3 import IPTCInfo
 from pathlib import Path
@@ -10,8 +10,8 @@ from datetime import datetime
 import os
 
 
-DEFAULT_VOL_SIZE = app.config.get('DEFAULT_VOL_SIZE')
-DEFAULT_MEDIA_SIZE = app.config.get('DEFAULT_MEDIA_SIZE')
+DEFAULT_VOL_SIZE = current_app.config.get('DEFAULT_VOL_SIZE')
+DEFAULT_MEDIA_SIZE = current_app.config.get('DEFAULT_MEDIA_SIZE')
 
 FORMATOS_FECHA = [
     '%Y:%m:%d %H:%M:%S',
@@ -25,14 +25,14 @@ def probar_fecha(valor, formatos=FORMATOS_FECHA) -> datetime:
 
     for f in formatos:
         try:
-            app.logger.debug("Testing format {}".format(f))
+            current_app.logger.debug("Testing format {}".format(f))
             return datetime.strptime(str(valor), f)
         except Exception as e:
-            app.logger.exception(
+            current_app.logger.exception(
                 "{} no esta en formato {}".format(valor, f))
 
     if fecha is None:
-        app.logger.debug(
+        current_app.logger.debug(
             "{} fallo todas las pruebas para fecha".format(repr(valor)))
 
     return fecha
@@ -69,7 +69,7 @@ class Volume(db.Model):
             if self.canStoreBytes(size) and self.canStoreNewMedia():
                 m = self.createNewMedia()
             else:
-                app.logger.debug(
+                current_app.logger.debug(
                     "{} there is not capacity left to store {}".format(
                         self.name, file_name))
                 return None
@@ -226,10 +226,10 @@ class Media(db.Model):
                 tags.extend(info.get('keywords'))
                 photo.keywords = tags
         except Exception as e:
-            app.logger.debug(
+            current_app.logger.debug(
                 "Image {} without IPTC info".format(dst))
 
-        app.logger.debug(
+        current_app.logger.debug(
             "Updating {}.used from {} to {}".format(
                 self.name, self.used, self.used + size))
         self.used = self.used + size
@@ -294,7 +294,10 @@ class Photo(db.Model):
 
     @keywords.setter
     def keywords(self, value):
-        self._kws = '|'.join(value)
+        if type(value) in [list, tuple]:
+            self._kws = '|'.join(value)
+        else:
+            self._kws = ''
 
 
     @keywords.comparator
@@ -323,7 +326,10 @@ class PhotoCoverage(db.Model):
 
     @keywords.setter
     def keywords(self, value):
-        self._kws = '|'.join(value)
+        if type(value) in [list, tuple]:
+            self._kws = '|'.join(value)
+        else:
+            self._kws = ''
 
 
     @keywords.comparator
