@@ -8,6 +8,7 @@ from iptcinfo3 import IPTCInfo
 from pathlib import Path
 from datetime import datetime
 import os
+import logging
 
 
 DEFAULT_VOL_SIZE = current_app.config.get('DEFAULT_VOL_SIZE')
@@ -58,6 +59,12 @@ class Volume(db.Model):
     fspath = db.Column(db.Text, default='')
     is_full = db.Column(db.Boolean, default=False)
     medias = db.relationship('Media', backref='volume', lazy=True)
+
+    
+    def testPath(self) -> bool:
+        my_path = Path(self.fspath)
+
+        return my_path.exists() and my_path.is_dir()
 
 
     def storePhoto(
@@ -150,7 +157,7 @@ class Volume(db.Model):
             Volume.is_full.is_(False)).order_by(
                 Volume.used.desc())
         for v in nofull:
-            if v.canStoreBytes(bts):
+            if v.canStoreBytes(bts) and v.testPath():
                 return v
 
         # no se encontro ninguno
@@ -221,6 +228,8 @@ class Media(db.Model):
             photo.taken_on = datetime.now()
 
         try:
+            iptc_log = logging.getLogger('iptcinfo')
+            iptc_log.setLevel(logging.ERROR)
             info = IPTCInfo(dst)
             if info.get('keywords'):
                 tags.extend(info.get('keywords'))

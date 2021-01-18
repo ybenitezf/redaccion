@@ -7,6 +7,7 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 from flask import current_app
 import os
+import logging
 
 
 def getImageInfo(filename):
@@ -32,7 +33,10 @@ def getImageInfo(filename):
     }
     """
     ret = {}
-
+    # -- reduce PIL logging
+    pil_logger = logging.getLogger('PIL')
+    pil_logger.setLevel(logging.ERROR)
+    # --
     with Image.open(filename) as im:
         info = im._getexif()
         for tag, value in info.items():
