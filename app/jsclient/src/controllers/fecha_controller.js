@@ -5,7 +5,7 @@ var moment = require("moment");
 // <time data-controller="fecha" data-fecha-momento-value="una fecha"></time>
 
 export default class FechaController extends Controller {
-    static values = { momento: String }
+    static values = { momento: String, formato: String}
 
     initialize() {
         const locale = window.navigator.userLanguage || window.navigator.language;
@@ -15,7 +15,7 @@ export default class FechaController extends Controller {
 
     connect () {
         const fecha = this.momentoValue;
-
-        this.element.innerHTML = moment(fecha).format('LLLL');
+        const formato = this.formatoValue || 'lll';
+        this.element.innerHTML = moment(fecha).format(formato);
     }
 }
