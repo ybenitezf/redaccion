@@ -16,7 +16,6 @@ from flask_marshmallow import Marshmallow
 from celery import Celery
 from flask import Flask, redirect
 from werkzeug.middleware.proxy_fix import ProxyFix
-import logging
 import os
 
 logs = LogSetup()
