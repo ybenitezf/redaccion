@@ -22,6 +22,10 @@ photostore = Blueprint(
 default_breadcrumb_root(photostore, '.')
 
 
+def can_edit_cobertura(cob: PhotoCoverage):
+    return (cob.author_id == current_user.id) or admin_rol.can()
+
+
 @photostore.before_app_first_request
 def setupMenus():
     navbar = current_menu.submenu("navbar.photostore")
@@ -95,12 +99,9 @@ def index():
     coberturas = PhotoCoverage.query.order_by(
         PhotoCoverage.archive_on.desc()).paginate(page, per_page=4)
 
-    def can_edit(photo: PhotoCoverage):
-        return (photo.author_id == current_user.id) or admin_rol.can()
-    
     return render_template(
         'photostore/index.html', coberturas=coberturas, 
-        form=form, can_edit=can_edit)
+        form=form, can_edit=can_edit_cobertura)
 
 
 def view_editarCobertura_dlc(*args, **kwargs):
@@ -121,6 +122,9 @@ def view_editarCobertura_dlc(*args, **kwargs):
 @login_required
 def editarCobertura(id):
     cobertura = PhotoCoverage.query.get_or_404(id)
+    if can_edit_cobertura(cobertura) is False:
+        abort(403)
+
     return render_template(
         'photostore/editar_cobertura.html', cobertura=cobertura)
 
