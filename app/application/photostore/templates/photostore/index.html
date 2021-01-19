@@ -48,7 +48,10 @@
                   <i class="material-icons left">person</i> {{ item.credit_line }}
               </div>
               <div class="photocoverage-archivedon">
-                  <i class="material-icons left">event</i> {{ item.archive_on.isoformat() }}
+                  <i class="material-icons left">event</i> 
+                  <span data-controller="fecha" data-fecha-momento-value="{{ item.archive_on.isoformat() }}">
+                    {{ item.archive_on.isoformat() }}
+                  </span>
               </div>
             </div>
             {% if can_edit(item) %}
