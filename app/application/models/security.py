@@ -26,6 +26,25 @@ class Role(db.Model):
     def __repr__(self):
         return '<Role {}>'.format(self.name)
 
+    @classmethod
+    def getUserEspecialRole(cls, user: 'User') -> 'Role': 
+        return cls.query.filter_by(
+            name="{}_role".format(user.username)).first()
+
+    @classmethod
+    def createUserEspecialRole(cls, user: 'User'):
+        rol = "{}_role".format(user.username)
+        r = cls.getUserEspecialRole(user)
+
+        if r is None:
+            r = Role(
+                    name=rol, 
+                    description="{} role".format(user.username)
+                )
+            user.roles.append(r)
+            db.session.add(r)
+            db.session.add(user)
+
 
 class Permission(db.Model):
     id = db.Column(db.String(32), primary_key=True, default=_gen_uuid)
@@ -59,7 +78,21 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return '<User {}>'.format(self.email)
+        return '<User {}>'.format(self.email or self.username)
+
+
+def create_user(username:str, password:str, name='', email='') -> User:
+    """Crear un usuario"""
+    user = User()
+    user.name = name
+    user.set_password(password)
+    user.username = username
+    user.email = email
+    
+    # crear grupo especial para el usuario
+    Role.createUserEspecialRole(user)
+
+    return user
 
 
 @identity_loaded.connect

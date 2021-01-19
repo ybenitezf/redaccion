@@ -1,6 +1,6 @@
 from pprint import pprint
 from flask.cli import cli
-from application.models.security import Role, User
+from application.models.security import Role, User, create_user as CreateUser
 from application.shemas import UserSchema, RoleSchema
 from application import db
 from flask import Blueprint, current_app
@@ -11,8 +11,8 @@ users_cmds = Blueprint("security", __name__)
 
 
 @users_cmds.cli.command('createuser')
-@click.option('--email', default=None, help='email')
-@click.option('--name', default=None, help='Nombre')
+@click.option('--email', default='', help='email')
+@click.option('--name', default='', help='Nombre')
 @click.argument('username')
 @click.argument('password')
 def create_user(username, password, email, name):
@@ -26,12 +26,7 @@ def create_user(username, password, email, name):
     if u is not None:
         raise click.ClickException("Ya existe el usuario")
     
-    u = User()
-    u.username = username
-    u.set_password(password)
-    u.email = email
-    if name:
-        u.name = name
+    u = CreateUser(username, password, email=email, name=name)
     db.session.add(u)
     db.session.commit()
     click.echo("Usuario creado")
