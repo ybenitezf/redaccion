@@ -1,3 +1,4 @@
 from flask_principal import RoleNeed, Permission
 
-admin_rol = Permission(RoleNeed('admin'))
+AdminRolNeed = RoleNeed('admin')
+admin_perm = Permission(AdminRolNeed)

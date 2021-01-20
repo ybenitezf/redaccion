@@ -38,7 +38,7 @@ class LogSetup(object):
         std_format = {
             "formatters": {
                 "default": {
-                    "format": "[%(asctime)s.%(msecs)03d] %(levelname)s %(name)s:%(funcName)s: %(message)s",
+                    "format": "[%(asctime)s.%(msecs)03d] %(levelname)s %(name)s:%(funcName)s:%(lineno)d: %(message)s",
                     "datefmt": "%d/%b/%Y:%H:%M:%S",
                 },
                 "access": {"format": "%(message)s"},

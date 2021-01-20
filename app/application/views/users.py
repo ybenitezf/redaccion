@@ -1,5 +1,5 @@
 from application import login_mgr, ldap_mgr, db
-from application.models.security import User
+from application.models.security import User, create_user
 from application.forms import LoginForm
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_ldap3_login import AuthenticationResponseStatus
@@ -93,7 +93,7 @@ def login():
     if form.validate_on_submit():
         auth_type = 'database'
 
-        if current_app.config['LDAP_AUTH']:
+        if current_app.config['LDAP_AUTH'] is True:
             # cargar usuario desde LDAP
             # crearlo/actualizar sus datos si no esta en mi base de datos
             res = ldap_mgr.authenticate(
@@ -103,13 +103,19 @@ def login():
                 user = User.query.filter_by(
                     username=form.username.data).first()
                 if user is None:
-                    user = User()
+                    user = create_user(
+                        res.user_info['sAMAccountName'],
+                        form.password.data,
+                        name = res.user_info.get('displayName', ''),
+                        email = res.user_info.get('mail', '')
+                    )
+                    db.session.add(user)
+                else:
+                    # ya lo tengo mandar a actualizar el pass si es necesario
+                    if user.check_password_hash(form.password.data) is False:
+                        user.set_password(form.password.data)
+                        db.session.add(user)
 
-                user.name = res.user_info['displayName']
-                user.set_password(form.password.data)
-                user.username = res.user_info['sAMAccountName']
-                user.email = res.user_info['mail']
-                db.session.add(user)
                 db.session.commit()
                 auth_type = 'ldap'
 

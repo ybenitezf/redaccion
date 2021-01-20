@@ -26,6 +26,40 @@ class Role(db.Model):
     def __repr__(self):
         return '<Role {}>'.format(self.name)
 
+    def addPermission(self, name, record_id, model_name):
+        p = Permission.query.filter_by(
+            name=name, model_name=model_name,
+            record_id=record_id, role_id=self.id).first()
+        if p is None:
+            p = Permission(
+                name=name, model_name=model_name,
+                record_id=record_id)
+            self.permissions.append(p)
+            self.query.session.add(p)
+            self.query.session.add(self)
+        else:
+            self.permissions.append(p)
+            self.query.session.add(self)
+
+    @classmethod
+    def getUserEspecialRole(cls, user: 'User') -> 'Role': 
+        return cls.query.filter_by(
+            name="{}_role".format(user.username)).first()
+
+    @classmethod
+    def createUserEspecialRole(cls, user: 'User'):
+        rol = "{}_role".format(user.username)
+        r = cls.getUserEspecialRole(user)
+
+        if r is None:
+            r = Role(
+                    name=rol, 
+                    description="{} role".format(user.username)
+                )
+            user.roles.append(r)
+            db.session.add(r)
+            db.session.add(user)
+
 
 class Permission(db.Model):
     id = db.Column(db.String(32), primary_key=True, default=_gen_uuid)
@@ -52,6 +86,10 @@ class User(UserMixin, db.Model):
         'Role', secondary=user_roles, lazy='select', 
         backref=db.backref('users', lazy=True))
 
+    def getUserRole(self):
+        """Retorna grupo especial para el usuario"""
+        return Role.getUserEspecialRole(self)
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -59,7 +97,21 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return '<User {}>'.format(self.email)
+        return '<User {}>'.format(self.email or self.username)
+
+
+def create_user(username:str, password:str, name='', email='') -> User:
+    """Crear un usuario"""
+    user = User()
+    user.name = name
+    user.set_password(password)
+    user.username = username
+    user.email = email
+    
+    # crear grupo especial para el usuario
+    Role.createUserEspecialRole(user)
+
+    return user
 
 
 @identity_loaded.connect
