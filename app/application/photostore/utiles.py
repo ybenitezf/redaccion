@@ -132,7 +132,6 @@ class StorageController(object):
                 self.indexPhoto(photo)
                 db.session.add(vol)
                 db.session.add(photo)
-                db.session.commit()
             return photo
 
         _l.debug("No se encontro un volumen para almacenar la foto")
