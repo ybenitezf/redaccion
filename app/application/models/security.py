@@ -26,6 +26,21 @@ class Role(db.Model):
     def __repr__(self):
         return '<Role {}>'.format(self.name)
 
+    def addPermission(self, name, record_id, model_name):
+        p = Permission.query.filter_by(
+            name=name, model_name=model_name,
+            record_id=record_id, role_id=self.id).first()
+        if p is None:
+            p = Permission(
+                name=name, model_name=model_name,
+                record_id=record_id)
+            self.permissions.append(p)
+            self.query.session.add(p)
+            self.query.session.add(self)
+        else:
+            self.permissions.append(p)
+            self.query.session.add(self)
+
     @classmethod
     def getUserEspecialRole(cls, user: 'User') -> 'Role': 
         return cls.query.filter_by(
@@ -70,6 +85,10 @@ class User(UserMixin, db.Model):
     roles = db.relationship(
         'Role', secondary=user_roles, lazy='select', 
         backref=db.backref('users', lazy=True))
+
+    def getUserRole(self):
+        """Retorna grupo especial para el usuario"""
+        return Role.getUserEspecialRole(self)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

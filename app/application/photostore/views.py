@@ -1,10 +1,11 @@
 from application import filetools, db
 from application.modules.editorjs import renderBlock
-from application.permissions import admin_rol
+from application.permissions import AdminRolNeed, admin_perm
 from .forms import PhotoDetailsForm, SearchPhotosForm
 from .models import Photo, PhotoCoverage
 from .utiles import StorageController
 from .permissions import rol_fotografia, EditPhotoPermission
+from .permissions import EDIT_PHOTO, DOWNLOAD_PHOTO
 from whoosh.filedb.filestore import FileStorage
 from whoosh.qparser import MultifieldParser
 from flask_login import login_required, current_user
@@ -23,7 +24,7 @@ default_breadcrumb_root(photostore, '.')
 
 
 def can_edit_cobertura(cob: PhotoCoverage):
-    return (cob.author_id == current_user.id) or admin_rol.can()
+    return (cob.author_id == current_user.id) or admin_perm.can()
 
 
 @photostore.before_app_first_request
@@ -62,7 +63,7 @@ def fakelink(id, ext):
 @register_breadcrumb(photostore, '.index.id', 'Detalles')
 def photo_details(id):
     p = Photo.query.get_or_404(id)
-    can_edit = (EditPhotoPermission(p.md5).can() or admin_rol.can())
+    can_edit = EditPhotoPermission(p.md5)
     return render_template(
         'photostore/photo_details.html', foto=p, can_edit=can_edit)
 
@@ -71,7 +72,7 @@ def photo_details(id):
 @register_breadcrumb(photostore, '.index.id', 'Editar datos de la foto')
 def photo_edit(id):
     p = Photo.query.get_or_404(id)
-    can_edit = (EditPhotoPermission(p.md5).can() or admin_rol.can())
+    can_edit = EditPhotoPermission(p.md5)
     if can_edit is False:
         abort(403)
 
@@ -221,6 +222,13 @@ def handle_upload():
         im = StorageController.getInstance().processPhoto(
             fullname, user_data)
         if im:
+            # darle permiso de edición al usuario que sube la foto
+            # para que pueda modificiar los datos
+            # REVIEW: puede sobre escribir los permisos
+            current_user.getUserRole().addPermission(
+                EDIT_PHOTO, im.md5, 'foto')
+            current_user.getUserRole().addPermission(
+                DOWNLOAD_PHOTO, im.md5, 'foto')
             # retornar la información de la imagen procesada, sobre
             # todo el md5 o id de la imagen
             db.session.add(im)
