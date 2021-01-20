@@ -1,6 +1,6 @@
 from application import filetools, db
 from application.modules.editorjs import renderBlock
-from application.permissions import AdminRolNeed, admin_perm
+from application.permissions import admin_perm
 from .forms import PhotoDetailsForm, SearchPhotosForm
 from .models import Photo, PhotoCoverage
 from .utiles import StorageController
@@ -84,6 +84,8 @@ def photo_edit(id):
         p.keywords = json.loads(form.tags.data)
         db.session.add(p)
         db.session.commit()
+        # reindexar la foto para que consten los cambios
+        StorageController.getInstance().indexPhoto(p)
         return redirect(url_for('.photo_details', id=p.md5))
 
     return render_template(
