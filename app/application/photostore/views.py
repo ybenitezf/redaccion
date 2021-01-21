@@ -2,7 +2,7 @@ from application import filetools, db
 from application.modules.editorjs import renderBlock
 from application.permissions import admin_perm
 from .forms import PhotoDetailsForm, SearchPhotosForm
-from .models import Photo, PhotoCoverage
+from .models import Photo, PhotoCoverage, PhotoPaginaBusqueda
 from .utiles import StorageController
 from .permissions import rol_fotografia, EditPhotoPermission
 from .permissions import EDIT_PHOTO, DOWNLOAD_PHOTO
@@ -156,7 +156,12 @@ def mis_fotos():
 @login_required
 def buscar_indice():
     form = SearchPhotosForm()
-    userquery = ""
+    userquery = request.args.get('userquery', "")
+    try:
+        page = int(request.args.get('page' , '1'))
+        page = page if page > 0 else 1
+    except ValueError:
+        page = 1
 
     if form.validate_on_submit():
         userquery = form.userquery.data
@@ -171,18 +176,13 @@ def buscar_indice():
     photos = []
     keywords_grp = {}
     with ix.searcher() as s:
-        results = s.search(qp.parse(userquery), groupedby="keywords")
-        keywords_grp = results.groups("keywords")
-        try:
-            from_search = [Photo.query.get(r.get('md5')) for r in results]
-            # clean up Nones, pueden venir de la busqueda
-            photos = [p for p in from_search if p]
-        except Exception as e:
-            current_app.logger.exception("Hay un problema aqui")
+        results = PhotoPaginaBusqueda(s.search_page(
+            qp.parse(userquery), page, pagelen=9,  groupedby="keywords"))
 
     return render_template(
-        'photostore/search.html', form=form,
-        fotos=photos, por_keywords=keywords_grp)
+        'photostore/search.html', 
+        form=form, results=results,
+        userquery=userquery)
 
 
 @photostore.route('/upload-form')
