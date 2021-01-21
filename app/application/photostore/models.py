@@ -1,6 +1,7 @@
 import shutil
 from application import db
 from application.models import _gen_uuid
+from application.modules.search import PaginaBusqueda
 from sqlalchemy.ext.hybrid import hybrid_property, Comparator
 from flask import current_app
 from PIL import Image
@@ -346,4 +347,14 @@ class PhotoCoverage(db.Model):
         return IsInComparator(cls._kws)
 
 
+class PhotoPaginaBusqueda(PaginaBusqueda):
 
+    def getObjectModel(self) -> db.Model:
+        return Photo
+
+    def getObjectIdentifier(self) -> 'str':
+        """Atributo en los resultados que identifica al objeto
+        
+        Para poder ser usando en getObjectsFromResults
+        """
+        return 'md5'
