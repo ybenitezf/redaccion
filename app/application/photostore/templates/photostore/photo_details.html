@@ -20,7 +20,11 @@
                 data-action="click->urlcopy#copyURL">
                 <i class="material-icons">content_copy</i>
             </a>
-            <a class="waves-effect waves-light btn disabled"><i class="material-icons">file_download</i></a>
+            {% if can_download_photo(foto.md5) %}
+            <a class="waves-effect waves-light btn disabled" href="{{ url_for('.photo_download', id=foto.md5) }}">
+                <i class="material-icons">file_download</i>
+            </a>
+            {% endif %}
             {% if can_edit %}
             <a href="{{ url_for('.photo_edit', id=foto.md5) }}" class="waves-effect waves-light btn"><i class="material-icons">edit</i></a>
             {% endif %}

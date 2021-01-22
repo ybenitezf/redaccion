@@ -15,6 +15,7 @@ class UserSchema(ma.SQLAlchemySchema):
     id = ma.auto_field()
     name = ma.auto_field()
     email = ma.auto_field()
+    username = ma.auto_field()
 
 class PhotoCoverageSchema(ma.SQLAlchemySchema):
     class Meta:
