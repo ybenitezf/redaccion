@@ -4,7 +4,7 @@ from application.permissions import admin_perm
 from .forms import PhotoDetailsForm, SearchPhotosForm
 from .models import Photo, PhotoCoverage, PhotoPaginaBusqueda
 from .utiles import StorageController
-from .permissions import rol_fotografia, EditPhotoPermission
+from .permissions import EditPhotoPermission, DownloadPhotoPermission
 from .permissions import EDIT_PHOTO, DOWNLOAD_PHOTO
 from whoosh.filedb.filestore import FileStorage
 from whoosh.qparser import MultifieldParser
@@ -26,6 +26,12 @@ default_breadcrumb_root(photostore, '.')
 def can_edit_cobertura(cob: PhotoCoverage):
     return (cob.author_id == current_user.id) or admin_perm.can()
 
+@photostore.context_processor
+def photostore_context():
+    def can_download(id):
+        return DownloadPhotoPermission(id=id).can()
+
+    return {'can_download_photo': can_download}
 
 @photostore.before_app_first_request
 def setupMenus():
