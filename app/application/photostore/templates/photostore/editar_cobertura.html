@@ -115,7 +115,8 @@
                 <input type="hidden" name="excerpt" value='{{ cobertura.excerpt|safe }}'>
                 <input type="hidden" name="taken_by" value='{{ current_user.name }}'>
                 <div class="file-field input-field">
-                    <div class="btn waves-effect waves-light" data-imageupload-target="btn">
+                    <div class="btn btn-small waves-effect waves-light" data-imageupload-target="btn">
+                        <i class="material-icons left">add_a_photo</i>
                         <span>Agregar Foto</span>
                         <input type="file" name="image" accept="image/*" data-imageupload-target="file" />
                     </div>
