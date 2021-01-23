@@ -21,7 +21,7 @@
                 <i class="material-icons">content_copy</i>
             </a>
             {% if can_download_photo(foto.md5) %}
-            <a class="waves-effect waves-light btn disabled" href="{{ url_for('.photo_download', id=foto.md5) }}">
+            <a class="waves-effect waves-light btn" href="{{ url_for('.photo_download', id=foto.md5) }}">
                 <i class="material-icons">file_download</i>
             </a>
             {% endif %}
