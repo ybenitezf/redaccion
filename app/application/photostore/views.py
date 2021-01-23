@@ -1,10 +1,12 @@
+from flask import stream_with_context
+from flask import Response
 from application import filetools, db
 from application.modules.editorjs import renderBlock
 from application.permissions import admin_perm
 from .forms import PhotoDetailsForm, SearchPhotosForm
 from .models import Photo, PhotoCoverage, PhotoPaginaBusqueda
 from .utiles import StorageController
-from .permissions import rol_fotografia, EditPhotoPermission
+from .permissions import EditPhotoPermission, DownloadPhotoPermission
 from .permissions import EDIT_PHOTO, DOWNLOAD_PHOTO
 from whoosh.filedb.filestore import FileStorage
 from whoosh.qparser import MultifieldParser
@@ -26,6 +28,12 @@ default_breadcrumb_root(photostore, '.')
 def can_edit_cobertura(cob: PhotoCoverage):
     return (cob.author_id == current_user.id) or admin_perm.can()
 
+@photostore.context_processor
+def photostore_context():
+    def can_download(id):
+        return DownloadPhotoPermission(id=id).can()
+
+    return {'can_download_photo': can_download}
 
 @photostore.before_app_first_request
 def setupMenus():
@@ -57,6 +65,27 @@ def photo_getimage(id):
 def fakelink(id, ext):
     p = Photo.query.get_or_404(id)
     return send_file(p.thumbnail)
+
+
+@photostore.route('/photo/download/<id>')
+def photo_download(id):
+    """Descargar el zip con la foto y la información de la foto"""
+    p = Photo.query.get_or_404(id)
+    file_name = StorageController.getInstance().makePhotoZip(p)
+    file_handle = open(file_name, 'rb')
+
+    def stream_and_remove():
+        yield from file_handle
+        file_handle.close()
+        os.remove(file_name)
+
+    return Response(
+        stream_with_context(stream_and_remove()), 
+        headers={
+            'Content-Type': 'application/zip',
+            'Content-Disposition': 'attachment; filename="{}.zip"'.format(id)
+        }
+    )
 
 
 @photostore.route('/photo/details/<id>')

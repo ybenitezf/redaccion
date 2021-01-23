@@ -1,13 +1,17 @@
-from pathlib import Path
 from application.modules.search import index_document, index_document_async
-from application.photostore.models import Photo, Volume
-from application.photostore.schemas import PhotoIndexSchema
+from application.modules.ziparchive import ZipArchive
 from application import filetools, db, celery
+from .models import Photo, Volume
+from .schemas import PhotoIndexSchema, PhotoToEditorJSSchema
 from PIL import Image
 from PIL.ExifTags import TAGS
 from flask import current_app
+from pathlib import Path
+import tempfile
 import os
+import shutil
 import logging
+import json
 
 
 def getImageInfo(filename):
@@ -80,6 +84,31 @@ class StorageController(object):
             index_document_async.delay(str(base / 'photos'), s.dump(photo))
         else:
             index_document(base / 'photos', s.dump(photo))
+
+    def makePhotoZip(self, photo: Photo) -> 'str':
+        with tempfile.NamedTemporaryFile(delete=True) as f:
+            archive_name = f.name
+
+        work_dir = tempfile.TemporaryDirectory()
+        foto_file_name = os.path.join(
+                work_dir.name, "{}.{}".format(photo.md5, photo.extension))
+        meta_file_name = os.path.join(
+                work_dir.name, "META-{}-INFO.json".format(photo.md5))
+        # copiar original
+        shutil.copy(photo.fspath, foto_file_name)
+        # dump de los metadatos de la foto
+        with open(meta_file_name,'w') as mf:
+            json.dump(PhotoToEditorJSSchema().dump(photo), mf)
+
+        # ponerlo todo en un el archivo zip
+        zip = ZipArchive(archive_name, 'w')
+        zip.addFile(foto_file_name, baseToRemove=work_dir.name)
+        zip.addFile(meta_file_name, baseToRemove=work_dir.name)
+        zip.close()
+
+        # limpiar directorio temporal
+        work_dir.cleanup()
+        return archive_name
 
     def processPhoto(self, file_name, user_data):
         """Inteta procesar y almacenar en el archivo una foto
