@@ -72,6 +72,7 @@ def create_app(config='config.Config'):
         from application.admin_commands import users_cmds
         from application.views.admin import MyAdminIndexView, UserView
         from application.views.admin import RoleView, PermissionView
+        from application.views.admin import BoardsAdminView, ArticleAdminView
 
         admon.init_app(app, index_view=MyAdminIndexView())
         # registrar los blueprints
@@ -82,9 +83,8 @@ def create_app(config='config.Config'):
         login_mgr.login_view = 'users.login'
 
         # admon views 
-        admon.add_view(UserView())
-        admon.add_view(RoleView())
-        admon.add_view(PermissionView())
+        admon.add_views(UserView(), RoleView(), PermissionView())
+        admon.add_views(ArticleAdminView(), BoardsAdminView())
 
         if app.config.get('PHOTOSTORE_ENABLED'):
             from application.photostore import photostore

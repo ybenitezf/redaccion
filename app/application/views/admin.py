@@ -1,5 +1,6 @@
 from application.forms import NewUserForm
 from application.models.security import User, Permission, Role
+from application.models.content import Article, Board
 from application.permissions import admin_perm
 from application import db
 from flask_admin.contrib.sqla import ModelView
@@ -34,7 +35,7 @@ class UserView(MySecureModelView):
     form_excluded_columns = ('password_hash', )
 
     def __init__(self):
-        super().__init__(User, db.session)
+        super().__init__(User, db.session, category='Securiry')
 
     @expose('/new/', methods=['GET', 'POST'])
     def create_view(self):
@@ -61,10 +62,25 @@ class RoleView(MySecureModelView):
     inline_models = (Permission,)
 
     def __init__(self):
-        super().__init__(Role, db.session)
+        super().__init__(Role, db.session, category='Securiry')
 
 
 class PermissionView(MySecureModelView):
 
     def __init__(self):
-        super().__init__(Permission, db.session)
+        super().__init__(Permission, db.session, category='Securiry')
+
+
+class BoardsAdminView(MySecureModelView):
+    column_display_pk = True
+    form_columns = ('name', )
+
+    def __init__(self):
+        super().__init__(
+            Board, db.session, category='Content')
+
+
+class ArticleAdminView(MySecureModelView):
+
+    def __init__(self):
+        super().__init__(Article, db.session, category='Content')
