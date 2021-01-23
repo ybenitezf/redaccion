@@ -39,6 +39,7 @@
                     {% if foto.focal %}<div class="exiftag"><i class="exificon material-icons">lens</i> {{foto.focal}}mm</div>{% endif %}
                     {% if foto.isovalue %}<div class="exiftag"><i class="exificon material-icons">iso</i> {{foto.isovalue}}</div>{% endif %}
                     {% if foto.software %}<div class="exiftag"><i class="exificon material-icons">brush</i> {{foto.software}}</div>{% endif %}
+                    {% if foto.image_width and foto.image_height %}<div class="exiftag"><i class="exificon material-icons">crop</i> {{foto.image_width}} x {{foto.image_height}}</div>{% endif %}
                     <!-- en opcionales -->
                 </div>
             </div>
